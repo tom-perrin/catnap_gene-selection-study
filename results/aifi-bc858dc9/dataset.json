@@ -1,0 +1,17 @@
+{
+  "dataset": "aifi-bc858dc9",
+  "name": "aifi",
+  "n_obs": 1821725,
+  "n_vars": 33538,
+  "label_cols": [
+    "AIFI_L1",
+    "AIFI_L2",
+    "AIFI_L3"
+  ],
+  "n_top": 2000,
+  "params": {
+    "f_stat": {},
+    "kw": {},
+    "vst": {}
+  }
+}

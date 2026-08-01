@@ -1,0 +1,262 @@
+# Config for the Hao PBMC dataset (celltype.l1 -> celltype.l2 -> celltype.l3)
+# Source: https://cellxgene.cziscience.com/collections/b0cf0afa-ec40-4d65-b570-ed4ceacc6813
+
+# Note: The "other" L1 branch (Doublet, Eryth, HSPC, ILC, Platelet) is omitted.
+
+
+# ----------------------------------------------------------------------
+
+
+# Backend / HVG default blocks
+
+logit_default: &logit_default
+  backend: logit
+  backend_params:
+    target_sum: 10000.0
+    max_iter: 1000
+    tol: 0.0001
+    C: 1.0
+    l1_ratio: 0.0
+    fit_intercept: true
+    class_weight: null
+    solver: lbfgs
+    n_jobs: null
+    seed: 0
+
+lgbm_default: &lgbm_default
+  backend: lgbm
+  backend_params:
+    n_estimators: 500
+    num_leaves: 63
+    max_depth: -1
+    learning_rate: 0.1
+    max_bin: 255
+    min_child_samples: 20
+    min_split_gain: 0.0
+    subsample: 1.0
+    subsample_freq: 0
+    colsample_bytree: 1.0
+    reg_alpha: 0.0
+    reg_lambda: 0.0
+    n_jobs: -1
+    device: auto
+    early_stopping_patience: 20
+    validation_size: 0.1
+    seed: 0
+
+scanvi_default: &scanvi_default
+  backend: scanvi
+  backend_params:
+    n_latent: 30
+    n_hidden: 128
+    n_layers: 2
+    dropout_rate: 0.1
+    gene_likelihood: zinb
+    dispersion: gene
+    latent_distribution: normal
+    max_epochs_scvi: 200
+    max_epochs_scanvi: 100
+    batch_size: 1024
+    batch_key: donor_id
+    unlabeled_category: unknown
+    accelerator: auto
+    train_size: 0.9
+    validation_size: null
+    early_stopping_patience: 15
+    lr: 0.001
+    weight_decay: 0.000001
+    n_epochs_kl_warmup: 400
+    reduce_lr_on_plateau: false
+    lr_factor: 0.6
+    lr_patience: 30
+    classification_ratio: 50
+    seed: 0
+
+seurat_default: &seurat_default
+  hvg: seurat_v3
+  hvg_params:
+    n_top_genes: 300
+    batch_key: null
+    share_loess: true
+    span_loess: 0.3
+
+f_statistic_default: &f_statistic_default
+  hvg: f_statistic
+  hvg_params:
+    n_top_genes: 300
+    "min_cells_per_child": 2
+
+kruskal_wallis_default: &kruskal_wallis_default
+  hvg: kruskal_wallis
+  hvg_params:
+    n_top_genes: 2000
+    "min_cells_per_child": 2
+    "gene_block": 4096
+
+
+# ----------------------------------------------------------------------
+
+
+# Taxonomy: celltype.l1 (L1) -> celltype.l2 (L2) -> celltype.l3 (L3, leaves)
+
+root:
+    <<: [*logit_default, *kruskal_wallis_default]
+    children:
+
+        "B":
+            <<: [*logit_default, *kruskal_wallis_default]
+            children:
+
+                "B intermediate":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "B intermediate kappa":  { children: {} }
+                        "B intermediate lambda": { children: {} }
+
+                "B memory":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "B memory kappa":  { children: {} }
+                        "B memory lambda": { children: {} }
+
+                "B naive":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "B naive kappa":  { children: {} }
+                        "B naive lambda": { children: {} }
+
+                "Plasmablast":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "Plasma":      { children: {} }
+                        "Plasmablast": { children: {} }
+
+
+        "CD4 T":
+            <<: [*logit_default, *kruskal_wallis_default]
+            children:
+
+                "CD4 CTL":           { children: {} }
+
+                "CD4 Naive":         { children: {} }
+
+                "CD4 Proliferating": { children: {} }
+
+                "CD4 TCM":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "CD4 TCM_1": { children: {} }
+                        "CD4 TCM_2": { children: {} }
+                        "CD4 TCM_3": { children: {} }
+
+                "CD4 TEM":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "CD4 TEM_1": { children: {} }
+                        "CD4 TEM_2": { children: {} }
+                        "CD4 TEM_3": { children: {} }
+                        "CD4 TEM_4": { children: {} }
+
+                "Treg":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "Treg Memory": { children: {} }
+                        "Treg Naive":  { children: {} }
+
+
+        "CD8 T":
+            <<: [*logit_default, *kruskal_wallis_default]
+            children:
+
+                "CD8 Naive":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "CD8 Naive":   { children: {} }
+                        "CD8 Naive_2": { children: {} }
+
+                "CD8 Proliferating": { children: {} }
+
+                "CD8 TCM":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "CD8 TCM_1": { children: {} }
+                        "CD8 TCM_2": { children: {} }
+                        "CD8 TCM_3": { children: {} }
+
+                "CD8 TEM":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "CD8 TEM_1": { children: {} }
+                        "CD8 TEM_2": { children: {} }
+                        "CD8 TEM_3": { children: {} }
+                        "CD8 TEM_4": { children: {} }
+                        "CD8 TEM_5": { children: {} }
+                        "CD8 TEM_6": { children: {} }
+
+
+        "DC":
+            <<: [*logit_default, *kruskal_wallis_default]
+            children:
+
+                "ASDC":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "ASDC_mDC": { children: {} }
+                        "ASDC_pDC": { children: {} }
+
+                "cDC1": { children: {} }
+
+                "cDC2":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "cDC2_1": { children: {} }
+                        "cDC2_2": { children: {} }
+
+                "pDC":  { children: {} }
+
+
+        "Mono":
+            <<: [*logit_default, *kruskal_wallis_default]
+            children:
+
+                "CD14 Mono": { children: {} }
+
+                "CD16 Mono": { children: {} }
+
+
+        "NK":
+            <<: [*logit_default, *kruskal_wallis_default]
+            children:
+
+                "NK":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "NK_1": { children: {} }
+                        "NK_2": { children: {} }
+                        "NK_3": { children: {} }
+                        "NK_4": { children: {} }
+
+                "NK Proliferating": { children: {} }
+
+                "NK_CD56bright":    { children: {} }
+
+
+        "other T":
+            <<: [*logit_default, *kruskal_wallis_default]
+            children:
+
+                "MAIT": { children: {} }
+
+                "dnT":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "dnT_1": { children: {} }
+                        "dnT_2": { children: {} }
+
+                "gdT":
+                    <<: [*logit_default, *kruskal_wallis_default]
+                    children:
+                        "gdT_1": { children: {} }
+                        "gdT_2": { children: {} }
+                        "gdT_3": { children: {} }
+                        "gdT_4": { children: {} }

@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+ &  & \multicolumn{3}{c}{L1} & \multicolumn{3}{c}{L2} & \multicolumn{3}{c}{L3} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+HVG method & $n$ & logit & lgbm & $\Delta$ & logit & lgbm & $\Delta$ & logit & lgbm & $\Delta$ \\
+\midrule
+seurat\_v3\_shareloess & 300 & 0.9937 & 0.9913 & -0.0023 & 0.9105 & 0.9110 & +0.0005 & 0.8194 & 0.8292 & +0.0098 \\
+\bottomrule
+\end{tabular}
+\caption{aifi, seurat\_v3\_shareloess @300: reselect-arm accuracy per node model. $\Delta$ vs logit.}
+\label{tab:backend-aifi-seurat_v3_shareloess-300}
+\end{table}

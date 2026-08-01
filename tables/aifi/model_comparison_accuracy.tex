@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrlrrrrrr}
+\toprule
+ &  &  & \multicolumn{2}{c}{L1} & \multicolumn{2}{c}{L2} & \multicolumn{2}{c}{L3} \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+HVG method & $n$ & model & reselect & fixed & reselect & fixed & reselect & fixed \\
+\midrule
+f\_statistic & 300 & lgbm & 0.9935 & \textbf{0.9943} & \textbf{0.9218} & 0.9118 & \textbf{0.8542} & 0.8091 \\
+f\_statistic & 300 & logit & 0.9968 & \textbf{0.9970} & \textbf{0.9313} & 0.9172 & \textbf{0.8566} & 0.8062 \\
+f\_statistic & 2000 & lgbm & 0.9934 & \textbf{0.9937} & 0.9316 & \textbf{0.9330} & \textbf{0.8733} & 0.8659 \\
+f\_statistic & 2000 & logit & \underline{0.9973} & \underline{0.9973} & \underline{\textbf{0.9490}} & 0.9479 & \underline{\textbf{0.8791}} & 0.8693 \\
+\midrule
+seurat\_v3\_shareloess & 300 & lgbm & 0.9913 & 0.9913 & \textbf{0.9110} & 0.7989 & \textbf{0.8292} & 0.6858 \\
+seurat\_v3\_shareloess & 300 & logit & 0.9937 & 0.9937 & \textbf{0.9105} & 0.7852 & \textbf{0.8194} & 0.6660 \\
+seurat\_v3\_shareloess & 2000 & lgbm & 0.9928 & 0.9928 & \textbf{0.9327} & 0.9307 & \textbf{0.8671} & 0.8646 \\
+seurat\_v3\_shareloess & 2000 & logit & \underline{0.9973} & \underline{0.9973} & \textbf{0.9460} & 0.9458 & 0.8648 & \textbf{0.8675} \\
+\bottomrule
+\end{tabular}
+\caption{aifi: accuracy per taxonomy level, per-node reselection vs a single fixed\_global set. Bold = better arm of the pair, underline = best for the level.}
+\label{tab:comparison-aifi-accuracy}
+\end{table}

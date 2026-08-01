@@ -1,0 +1,27 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrlrrrrrr}
+\toprule
+ &  &  & \multicolumn{2}{c}{L1} & \multicolumn{2}{c}{L2} & \multicolumn{2}{c}{L3} \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+HVG method & $n$ & model & reselect & fixed & reselect & fixed & reselect & fixed \\
+\midrule
+f\_statistic & 300 & lgbm & 0.9801 & \textbf{0.9805} & \textbf{0.9481} & 0.9324 & \textbf{0.8516} & 0.8118 \\
+f\_statistic & 300 & logit & 0.9757 & \textbf{0.9765} & \textbf{0.9388} & 0.9252 & \textbf{0.8271} & 0.7852 \\
+f\_statistic & 2000 & lgbm & 0.9862 & \textbf{0.9868} & 0.9493 & \textbf{0.9560} & 0.8539 & \textbf{0.8572} \\
+f\_statistic & 2000 & logit & 0.9769 & \textbf{0.9806} & 0.9365 & \textbf{0.9380} & \textbf{0.7935} & 0.7928 \\
+kruskal\_wallis & 300 & lgbm & 0.9780 & \textbf{0.9806} & \textbf{0.9422} & 0.9326 & \textbf{0.8461} & 0.7742 \\
+kruskal\_wallis & 300 & logit & 0.9727 & \textbf{0.9754} & \textbf{0.9384} & 0.9265 & \textbf{0.8255} & 0.7499 \\
+kruskal\_wallis & 2000 & lgbm & 0.9861 & \textbf{0.9870} & 0.9559 & \textbf{0.9569} & 0.8579 & \textbf{0.8617} \\
+kruskal\_wallis & 2000 & logit & 0.9774 & \textbf{0.9800} & 0.9368 & \textbf{0.9376} & 0.7943 & \textbf{0.7951} \\
+\midrule
+seurat\_v3\_shareloess & 300 & lgbm & 0.9784 & 0.9784 & \textbf{0.9393} & 0.9165 & \textbf{0.8179} & 0.7953 \\
+seurat\_v3\_shareloess & 300 & logit & 0.9698 & 0.9698 & \textbf{0.9230} & 0.8956 & \textbf{0.7762} & 0.7410 \\
+seurat\_v3\_shareloess & 2000 & lgbm & \underline{0.9871} & \underline{0.9871} & 0.9540 & \underline{\textbf{0.9572}} & 0.8478 & \underline{\textbf{0.8629}} \\
+seurat\_v3\_shareloess & 2000 & logit & 0.9790 & 0.9790 & 0.9306 & \textbf{0.9348} & 0.7573 & \textbf{0.7859} \\
+\bottomrule
+\end{tabular}
+\caption{hao: accuracy per taxonomy level, per-node reselection vs a single fixed\_global set. Bold = better arm of the pair, underline = best for the level.}
+\label{tab:comparison-hao-accuracy}
+\end{table}

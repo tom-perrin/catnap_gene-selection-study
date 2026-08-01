@@ -1,0 +1,17 @@
+{
+  "dataset": "hao-2c5fa741",
+  "name": "hao",
+  "n_obs": 161764,
+  "n_vars": 20264,
+  "label_cols": [
+    "celltype.l1",
+    "celltype.l2",
+    "celltype.l3"
+  ],
+  "n_top": 2000,
+  "params": {
+    "f_stat": {},
+    "kw": {},
+    "vst": {}
+  }
+}

@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Data
+*.h5ad
+*.h5ad.*
+
+# Trained model trees
+runs/
+runs_repeats/
+
+# Note: results/, figures/ and tables/ are tracked

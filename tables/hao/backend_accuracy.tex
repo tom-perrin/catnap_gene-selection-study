@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+ &  & \multicolumn{3}{c}{L1} & \multicolumn{3}{c}{L2} & \multicolumn{3}{c}{L3} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+HVG method & $n$ & logit & lgbm & $\Delta$ & logit & lgbm & $\Delta$ & logit & lgbm & $\Delta$ \\
+\midrule
+f\_statistic & 300 & 0.9757 & 0.9801 & +0.0044 & 0.9388 & 0.9481 & +0.0093 & 0.8271 & 0.8516 & +0.0245 \\
+ & 2000 & 0.9769 & 0.9862 & +0.0093 & 0.9365 & 0.9493 & +0.0128 & 0.7935 & 0.8539 & +0.0605 \\
+\addlinespace
+kruskal\_wallis & 300 & 0.9727 & 0.9780 & +0.0053 & 0.9384 & 0.9422 & +0.0039 & 0.8255 & 0.8461 & +0.0206 \\
+ & 2000 & 0.9774 & 0.9861 & +0.0087 & 0.9368 & 0.9559 & +0.0191 & 0.7943 & 0.8579 & +0.0636 \\
+\addlinespace
+seurat\_v3\_shareloess & 300 & 0.9698 & 0.9784 & +0.0086 & 0.9230 & 0.9393 & +0.0163 & 0.7762 & 0.8179 & +0.0416 \\
+ & 2000 & 0.9790 & 0.9871 & +0.0081 & 0.9306 & 0.9540 & +0.0234 & 0.7573 & 0.8478 & +0.0905 \\
+\bottomrule
+\end{tabular}
+\caption{hao: accuracy of the reselect arm per node model, for identical gene selections. $\Delta$ is relative to logit.}
+\label{tab:backend-hao-accuracy}
+\end{table}

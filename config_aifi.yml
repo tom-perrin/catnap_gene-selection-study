@@ -1,0 +1,274 @@
+# Config for the AIFI Human Immune Health Atlas dataset (AIFI_L1 -> AIFI_L2 -> AIFI_L3)
+# Source: https://apps.allenimmunology.org/aifi/resources/imm-health-atlas/
+
+# Note: Progenitor cell L1 node has no true L2 subdivision.
+
+# ----------------------------------------------------------------------
+
+# Backend / HVG default blocks
+
+logit_default: &logit_default
+  backend: logit
+  backend_params:
+    target_sum: 10000.0
+    max_iter: 1000
+    tol: 0.0001
+    C: 1.0
+    l1_ratio: 0.0
+    fit_intercept: true
+    class_weight: null
+    solver: lbfgs
+    n_jobs: null
+    seed: 0
+
+lgbm_default: &lgbm_default
+  backend: lgbm
+  backend_params:
+    n_estimators: 500
+    num_leaves: 63
+    max_depth: -1
+    learning_rate: 0.1
+    max_bin: 255
+    min_child_samples: 20
+    min_split_gain: 0.0
+    subsample: 1.0
+    subsample_freq: 0
+    colsample_bytree: 1.0
+    reg_alpha: 0.0
+    reg_lambda: 0.0
+    n_jobs: -1
+    device: auto
+    early_stopping_patience: 20
+    validation_size: 0.1
+    seed: 0
+
+scanvi_default: &scanvi_default
+  backend: scanvi
+  backend_params:
+    n_latent: 30
+    n_hidden: 128
+    n_layers: 2
+    dropout_rate: 0.1
+    gene_likelihood: zinb
+    dispersion: gene
+    latent_distribution: normal
+    max_epochs_scvi: 200
+    max_epochs_scanvi: 100
+    batch_size: 1024
+    batch_key: dataset
+    unlabeled_category: unknown
+    accelerator: auto
+    train_size: 0.9
+    validation_size: null
+    early_stopping_patience: 15
+    lr: 0.001
+    weight_decay: 0.000001
+    n_epochs_kl_warmup: 400
+    reduce_lr_on_plateau: false
+    lr_factor: 0.6
+    lr_patience: 30
+    classification_ratio: 50
+    seed: 0
+
+seurat_default: &seurat_default
+  hvg: seurat_v3
+  hvg_params:
+    n_top_genes: 300
+    batch_key: null
+    share_loess: true
+    span_loess: 0.3
+
+f_statistic_default: &f_statistic_default
+  hvg: f_statistic
+  hvg_params:
+    n_top_genes: 2000
+    "min_cells_per_child": 2
+
+kruskal_wallis_default: &kruskal_wallis_default
+  hvg: kruskal_wallis
+  hvg_params:
+    n_top_genes: 2000
+    "min_cells_per_child": 2
+
+
+# ----------------------------------------------------------------------
+
+
+root:
+    <<: [*logit_default, *seurat_default]
+    children:
+
+        "B cell":
+            <<: [*logit_default, *seurat_default]
+            children:
+
+                "Transitional B cell": { children: {} }
+
+                "Naive B cell":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "Core naive B cell": { children: {} }
+                        "ISG+ naive B cell": { children: {} }
+
+                "Memory B cell":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "Early memory B cell":            { children: {} }
+                        "Core memory B cell":             { children: {} }
+                        "Type 2 polarized memory B cell": { children: {} }
+                        "CD95 memory B cell":             { children: {} }
+                        "Activated memory B cell":        { children: {} }
+                        
+                "Effector B cell":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "CD27+ effector B cell": { children: {} }
+                        "CD27- effector B cell": { children: {} }
+                
+                "Plasma cell": { children: {} }
+
+        "T cell":
+            <<: [*logit_default, *seurat_default]
+            children:
+
+                "Naive CD4 T cell":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "Core naive CD4 T cell":  { children: {} }
+                        "SOX4+ naive CD4 T cell": { children: {} }
+                        "ISG+ naive CD4 T cell":  { children: {} }
+
+                "Memory CD4 T cell":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "CM CD4 T cell":                        { children: {} }
+                        "GZMB- CD27- EM CD4 T cell":            { children: {} }
+                        "GZMB- CD27+ EM CD4 T cell":            { children: {} }
+                        "KLRF1- GZMB+ CD27- memory CD4 T cell": { children: {} }
+                        "ISG+ memory CD4 T cell":               { children: {} }
+
+                "Treg":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "Naive CD4 Treg":         { children: {} }
+                        "Memory CD4 Treg":        { children: {} }
+                        "KLRB1+ memory CD4 Treg": { children: {} }
+                        "GZMK+ memory CD4 Treg":  { children: {} }
+                        "Memory CD8 Treg":        { children: {} }
+                        "KLRB1+ memory CD8 Treg": { children: {} }
+
+                "DN T cell": { children: {} }
+
+                "Proliferating T cell": { children: {} }
+
+                "Naive CD8 T cell":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "Core naive CD8 T cell":  { children: {} }
+                        "SOX4+ naive CD8 T cell": { children: {} }
+                        "ISG+ naive CD8 T cell":  { children: {} }
+
+                "Memory CD8 T cell":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "CM CD8 T cell":                    { children: {} }
+                        "GZMK- CD27+ EM CD8 T cell":        { children: {} }
+                        "GZMK+ CD27+ EM CD8 T cell":        { children: {} }
+                        "KLRF1- GZMB+ CD27- EM CD8 T cell": { children: {} }
+                        "KLRF1+ GZMB+ CD27- EM CD8 T cell": { children: {} }
+                        "ISG+ memory CD8 T cell":           { children: {} }
+
+                "CD8aa": { children: {} }
+
+                "gdT":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "Naive Vd1 gdT":           { children: {} }
+                        "SOX4+ Vd1 gdT":           { children: {} }
+                        "KLRF1- effector Vd1 gdT": { children: {} }
+                        "KLRF1+ effector Vd1 gdT": { children: {} }
+                        "GZMB+ Vd2 gdT":           { children: {} }
+                        "GZMK+ Vd2 gdT":           { children: {} }
+
+                "MAIT":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "CD4 MAIT":  { children: {} }
+                        "CD8 MAIT":  { children: {} }
+                        "ISG+ MAIT": { children: {} }
+
+
+        "NK cell":
+            <<: [*logit_default, *seurat_default]
+            children:
+
+                "CD56bright NK cell": { children: {} }
+
+                "CD56dim NK cell":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "GZMK- CD56dim NK cell": { children: {} }
+                        "GZMK+ CD56dim NK cell": { children: {} }
+                        "Adaptive NK cell":      { children: {} }
+                        "ISG+ CD56dim NK cell":  { children: {} }
+
+                "Proliferating NK cell": { children: {} }
+
+
+        "ILC": { children: {} }
+
+
+        "Monocyte":
+            <<: [*logit_default, *seurat_default]
+            children:
+
+                "CD14 monocyte":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "Core CD14 monocyte":  { children: {} }
+                        "IL1B+ CD14 monocyte": { children: {} }
+                        "ISG+ CD14 monocyte":  { children: {} }
+                
+                "CD16 monocyte":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "Core CD16 monocyte": { children: {} }
+                        "C1Q+ CD16 monocyte": { children: {} }
+                        "ISG+ CD16 monocyte": { children: {} }
+                
+                "Intermediate monocyte": { children: {} }
+
+        "DC":
+            <<: [*logit_default, *seurat_default]
+            children:
+
+                "ASDC": { children: {} }
+
+                "cDC1": { children: {} }
+
+                "cDC2":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "CD14+ cDC2":    { children: {} }
+                        "HLA-DRhi cDC2": { children: {} }
+                        "ISG+ cDC2":     { children: {} }
+
+                "pDC": { children: {} }
+
+
+        "Progenitor cell":
+            <<: [*logit_default, *seurat_default]
+            children:
+
+                "Progenitor cell":
+                    <<: [*logit_default, *seurat_default]
+                    children:
+                        "CLP cell":     { children: {} }
+                        "CMP cell":     { children: {} }
+                        "BaEoMaP cell": { children: {} }
+
+
+        "Erythrocyte": { children: {} }
+
+
+        "Platelet": { children: {} }

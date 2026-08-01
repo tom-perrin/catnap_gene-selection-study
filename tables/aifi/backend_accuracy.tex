@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+ &  & \multicolumn{3}{c}{L1} & \multicolumn{3}{c}{L2} & \multicolumn{3}{c}{L3} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+HVG method & $n$ & logit & lgbm & $\Delta$ & logit & lgbm & $\Delta$ & logit & lgbm & $\Delta$ \\
+\midrule
+f\_statistic & 300 & 0.9968 & 0.9935 & -0.0034 & 0.9313 & 0.9218 & -0.0096 & 0.8566 & 0.8542 & -0.0024 \\
+ & 2000 & 0.9973 & 0.9934 & -0.0039 & 0.9490 & 0.9316 & -0.0174 & 0.8791 & 0.8733 & -0.0058 \\
+\addlinespace
+seurat\_v3\_shareloess & 300 & 0.9937 & 0.9913 & -0.0023 & 0.9105 & 0.9110 & +0.0005 & 0.8194 & 0.8292 & +0.0098 \\
+ & 2000 & 0.9973 & 0.9928 & -0.0045 & 0.9460 & 0.9327 & -0.0133 & 0.8648 & 0.8671 & +0.0023 \\
+\bottomrule
+\end{tabular}
+\caption{aifi: accuracy of the reselect arm per node model, for identical gene selections. $\Delta$ is relative to logit.}
+\label{tab:backend-aifi-accuracy}
+\end{table}

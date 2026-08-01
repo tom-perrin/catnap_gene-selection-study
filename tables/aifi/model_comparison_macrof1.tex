@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrlrrrrrr}
+\toprule
+ &  &  & \multicolumn{2}{c}{L1} & \multicolumn{2}{c}{L2} & \multicolumn{2}{c}{L3} \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+HVG method & $n$ & model & reselect & fixed & reselect & fixed & reselect & fixed \\
+\midrule
+f\_statistic & 300 & lgbm & 0.8105 & \textbf{0.8450} & \textbf{0.7534} & 0.7437 & \textbf{0.5551} & 0.4434 \\
+f\_statistic & 300 & logit & 0.9621 & \textbf{0.9667} & 0.7960 & \textbf{0.8072} & \textbf{0.5801} & 0.4567 \\
+f\_statistic & 2000 & lgbm & 0.8085 & \textbf{0.8275} & 0.7651 & \textbf{0.7775} & \textbf{0.5747} & 0.5679 \\
+f\_statistic & 2000 & logit & \textbf{0.9712} & 0.9706 & \underline{\textbf{0.8558}} & 0.8253 & \underline{\textbf{0.6269}} & 0.5985 \\
+\midrule
+seurat\_v3\_shareloess & 300 & lgbm & 0.8271 & 0.8271 & \textbf{0.7492} & 0.6810 & \textbf{0.5147} & 0.3523 \\
+seurat\_v3\_shareloess & 300 & logit & 0.9453 & 0.9453 & \textbf{0.7780} & 0.6929 & \textbf{0.5268} & 0.3586 \\
+seurat\_v3\_shareloess & 2000 & lgbm & 0.8097 & 0.8097 & \textbf{0.7807} & 0.7798 & \textbf{0.5847} & 0.5765 \\
+seurat\_v3\_shareloess & 2000 & logit & \underline{0.9717} & \underline{0.9717} & 0.8512 & \textbf{0.8535} & 0.6028 & \textbf{0.6140} \\
+\bottomrule
+\end{tabular}
+\caption{aifi: macro-f1 per taxonomy level, per-node reselection vs a single fixed\_global set. Bold = better arm of the pair, underline = best for the level.}
+\label{tab:comparison-aifi-macrof1}
+\end{table}

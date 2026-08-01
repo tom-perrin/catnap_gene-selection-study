@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+ &  & \multicolumn{3}{c}{L1} & \multicolumn{3}{c}{L2} & \multicolumn{3}{c}{L3} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+HVG method & $n$ & logit & lgbm & $\Delta$ & logit & lgbm & $\Delta$ & logit & lgbm & $\Delta$ \\
+\midrule
+f\_statistic & 300 & 0.9629 & 0.9701 & +0.0072 & 0.8559 & 0.8633 & +0.0074 & 0.6225 & 0.6081 & -0.0144 \\
+ & 2000 & 0.9618 & 0.9781 & +0.0163 & 0.8701 & 0.8638 & -0.0063 & 0.5925 & 0.6404 & +0.0479 \\
+\addlinespace
+kruskal\_wallis & 300 & 0.9574 & 0.9677 & +0.0102 & 0.8539 & 0.8427 & -0.0112 & 0.5948 & 0.6097 & +0.0148 \\
+ & 2000 & 0.9623 & 0.9780 & +0.0156 & 0.8709 & 0.8818 & +0.0109 & 0.5906 & 0.6445 & +0.0540 \\
+\addlinespace
+seurat\_v3\_shareloess & 300 & 0.9546 & 0.9699 & +0.0153 & 0.8333 & 0.8712 & +0.0379 & 0.5779 & 0.6093 & +0.0314 \\
+ & 2000 & 0.9656 & 0.9796 & +0.0140 & 0.8609 & 0.8795 & +0.0186 & 0.5772 & 0.6416 & +0.0644 \\
+\bottomrule
+\end{tabular}
+\caption{hao: macro-f1 of the reselect arm per node model, for identical gene selections. $\Delta$ is relative to logit.}
+\label{tab:backend-hao-macrof1}
+\end{table}
