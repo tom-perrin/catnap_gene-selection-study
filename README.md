@@ -1,9 +1,8 @@
 # HVG selection study
 
-Per-node HVG re-selection vs a single global selection, in catnap_core.
+Per-node HVG reselection vs single global selection, in catnap_core.
 
-To reproduce results, set parameters in `hvg_selection.ipynb`'s cells.  
-The code used is in `hvgsel/`.
+To reproduce results, set parameters in `hvg_selection.ipynb`'s cells. The code used is in `hvgsel/`.
 
 Note: `results/`, `figures/` and `tables/` ship with the repo, `runs/` and `runs_repeats` do not. The selection cells will only read the cached scores but the downstream cells will train all models.
 
