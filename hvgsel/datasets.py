@@ -37,6 +37,7 @@ class Dataset:
     raw_source: tuple[str, str | None]  # ("layer", key) or ("raw", None) or ("X", None)
     symbol_col: str | None              # var column holding gene symbols (None: var_names are symbols)
     config_file: str                    # catnap config used by the downstream accuracy experiment
+    donor_col: str | None = None        # obs column naming the donor, what the splits hold out
     methods: tuple[str, ...] = ALL_METHODS   # score methods affordable on this dataset
     examples: dict = field(default_factory=dict)
     # examples: every node and pair the notebook draws a figure for, in one pass.
@@ -57,6 +58,7 @@ DATASETS = {
         raw_source=("raw", None),   # .X is z-scaled and unusable; counts live in .raw.X (uint16)
         symbol_col=None,
         config_file="config_aifi.yml",
+        donor_col="subject.subjectGuid",   # to confirm against the h5ad's obs
         methods=("f_stat", "vst"),  # kw densifies the matrix and is too slow on AIFI
         examples=dict(nodes=["T cell", "Treg"],
                       pairs=[("Monocyte", "NK cell"), ("Naive CD4 T cell", "Naive CD8 T cell")],
@@ -69,6 +71,7 @@ DATASETS = {
         raw_source=("layer", "corrected_counts"),  # on-disk .X is log-normalized
         symbol_col="feature_name",
         config_file="config_hao.yml",
+        donor_col="donor_id",   # CELLxGENE schema
         examples=dict(nodes=["CD4 T", "Treg"],
                       pairs=[("Mono", "NK"), ("CD4 T", "CD8 T")],
                       cl_nodes=["root", "CD4 T"]),

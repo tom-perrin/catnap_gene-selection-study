@@ -30,6 +30,7 @@ import numpy as np
 import pandas as pd
 import yaml
 from sklearn.metrics import accuracy_score, f1_score
+from sklearn.model_selection import StratifiedGroupKFold
 
 from catnap_core import hierarchy
 from catnap_core.hierarchy import norm
@@ -93,13 +94,22 @@ BACKEND_PARAMS = {"logit": None, "lgbm": LGBM_PARAMS}
 
 @dataclass(frozen=True)
 class Split:
-    """A seeded, finest-label-stratified train/test split, restricted to the config's tree."""
+    """
+    A seeded, finest-label-stratified train/test split, restricted to the config's tree.
+
+    Donor-aware when donor_col is set: fold `fold` of `n_folds` groups of whole donors is held
+    out. donor_col None is the legacy cell-level split, drawn per label at test_frac.
+    """
 
     train: np.ndarray
     test: np.ndarray
     seed: int
     test_frac: float
     subsample: int | None
+    donor_col: str | None = None
+    n_folds: int | None = None
+    fold: int | None = None
+    n_donors: tuple[int, int] | None = None   # (train, test)
 
     @property
     def key(self) -> str:
@@ -108,12 +118,31 @@ class Split:
 
     @property
     def meta(self) -> dict:
-        return {"seed": self.seed, "test_frac": self.test_frac, "subsample": self.subsample,
+        meta = {"seed": self.seed, "test_frac": self.test_frac, "subsample": self.subsample,
                 "train_key": self.key,
                 "n_train": int(self.train.sum()), "n_test": int(self.test.sum())}
+        if self.donor_col is not None:
+            meta |= {"donor_col": self.donor_col, "n_folds": self.n_folds, "fold": self.fold,
+                     "n_train_donors": self.n_donors[0], "n_test_donors": self.n_donors[1]}
+        return meta
 
 
-def make_split(adata, label_cols, config_path, test_frac=0.2, seed=0, subsample=None) -> Split:
+def make_split(adata, label_cols, config_path, donor_col: str | None = None, n_folds=5, fold=0,
+               seed=0, subsample=None, test_frac=0.2) -> Split:
+    """
+    Train/test masks over the cells of the config's tree.
+
+    donor_col names the obs column holding the donor. The donors are dealt into n_folds groups,
+    balancing the finest-label composition across groups (StratifiedGroupKFold, shuffled by
+    seed), and group `fold` is the test set: no donor has cells on both sides. A single 80/20
+    split is fold 0 of 5, and the 5 folds of one seed partition the donors, so each is held out
+    exactly once.
+
+    donor_col None is the legacy cell-level split, a test_frac draw within every finest label,
+    kept only so runs trained before donor-aware splits can be rebuilt and re-scored.
+
+    subsample caps the cells first, with a draw stratified on the finest label, in both modes.
+    """
     finest = finest_labels(adata, label_cols)
     root_name, root_node = hierarchy.root_item(hierarchy.load_config(config_path))
     pool = np.flatnonzero(np.isin(finest, list(hierarchy.subtree_labels(root_name, root_node))))
@@ -124,12 +153,37 @@ def make_split(adata, label_cols, config_path, test_frac=0.2, seed=0, subsample=
         keep = pool[stratified_draw(finest[pool], subsample / pool.size, rng)]
 
     test = np.zeros(adata.n_obs, bool)
-    for label in np.unique(finest[keep]):
-        idx = keep[finest[keep] == label]
-        test[rng.choice(idx, size=int(round(idx.size * test_frac)), replace=False)] = True
     train = np.zeros(adata.n_obs, bool)
     train[keep] = True
-    return Split(train & ~test, test, seed, test_frac, subsample)
+
+    if donor_col is None:
+        for label in np.unique(finest[keep]):
+            idx = keep[finest[keep] == label]
+            test[rng.choice(idx, size=int(round(idx.size * test_frac)), replace=False)] = True
+        return Split(train & ~test, test, seed, test_frac, subsample)
+
+    if donor_col not in adata.obs.columns:
+        raise KeyError(f"donor column {donor_col!r} not in obs: {list(adata.obs.columns)}")
+    if not 0 <= fold < n_folds:
+        raise ValueError(f"fold {fold} outside 0..{n_folds - 1}")
+    donors = adata.obs[donor_col].to_numpy()[keep]
+    if pd.isna(donors).any():
+        raise ValueError(f"{int(pd.isna(donors).sum()):,} cells have no {donor_col!r}, "
+                         "they cannot be assigned to one side")
+    donors = donors.astype(str)
+    if np.unique(donors).size < n_folds:
+        raise ValueError(f"{np.unique(donors).size} donors cannot fill {n_folds} folds")
+
+    folds = StratifiedGroupKFold(n_splits=n_folds, shuffle=True, random_state=seed)
+    _, held_out = list(folds.split(keep, finest[keep], groups=donors))[fold]
+    test[keep[held_out]] = True
+    train &= ~test
+
+    train_donors = set(adata.obs[donor_col].to_numpy()[train].astype(str))
+    test_donors = set(adata.obs[donor_col].to_numpy()[test].astype(str))
+    assert not train_donors & test_donors, "a donor landed on both sides of the split"
+    return Split(train, test, seed, 1 / n_folds, subsample, donor_col, n_folds, fold,
+                 (len(train_donors), len(test_donors)))
 
 
 # --- Run on disk -----------------------------------------------------
@@ -322,19 +376,29 @@ def baseline_selection(adata_train, label_cols, spec: Score, n_top: int, cache_d
 
 
 def compare_arms(adata, dataset: str, label_cols, config_path, baseline: Score, n_hvg: int,
-                 root="runs", tag: str | None = None, test_frac=0.2, seed=0, subsample=None,
-                 min_n=20, force=False, split: Split | None = None) -> Run:
+                 root="runs", tag: str | None = None, donor_col: str | None = None, n_folds=5,
+                 fold=0, seed=0, subsample=None, test_frac=0.2, min_n=20, force=False,
+                 split: Split | None = None) -> Run:
     """
     Full experiment: split, train or reuse both arms, predict, score, write under root/dataset/tag.
 
-    baseline is the root selection that defines the fixed_global gene set.
+    baseline is the root selection that defines the fixed_global gene set. The split arguments
+    are make_split's.
+
+    Note: models already under root/dataset/tag are reused only if they were trained on this
+    split's training cells. Otherwise the held-out cells could include cells they trained on.
     """
     config_path = Path(config_path)
     run = Run(root, dataset, tag or config_tag(config_path))
     if split is None:
-        split = make_split(adata, label_cols, config_path, test_frac, seed, subsample)
+        split = make_split(adata, label_cols, config_path, donor_col=donor_col, n_folds=n_folds,
+                           fold=fold, seed=seed, subsample=subsample, test_frac=test_frac)
     adata_test = adata[split.test].copy()
 
+    trained_on = run.meta.get("train_key")
+    if run.trained and not force and trained_on != split.key:
+        raise RuntimeError(f"{run.dir} holds models trained on another split ({trained_on}, "
+                           f"this one is {split.key}): move them out of {root}/ or pass force=True")
     if run.trained and not force:
         print(f"both arms already trained under {run.dir}")
     else:  # training cells and baseline selection are only needed to train
@@ -462,7 +526,8 @@ def refresh_runs(adata, dataset: str, label_cols, root="runs", min_n=20, tags=No
     for runs whose models exist but whose numbers predate them.
 
     Note: the split is rebuilt from each run.json, runs written before those fields existed fall
-    back to the study's defaults (20% test, seed 0, no subsample).
+    back to the study's defaults (20% test, seed 0, no subsample). A run.json without donor_col
+    is a legacy cell-level run, and its cell-level split is rebuilt.
     """
     runs = []
     for run_dir in sorted((Path(root) / dataset).iterdir()):
@@ -474,7 +539,12 @@ def refresh_runs(adata, dataset: str, label_cols, root="runs", min_n=20, tags=No
             continue
         meta = run.meta
         split = make_split(adata, label_cols, run.arm_dir("reselect") / "config.yml",
-                           meta.get("test_frac", 0.2), meta.get("seed", 0), meta.get("subsample"))
+                           donor_col=meta.get("donor_col"), n_folds=meta.get("n_folds") or 5,
+                           fold=meta.get("fold") or 0, seed=meta.get("seed", 0),
+                           subsample=meta.get("subsample"), test_frac=meta.get("test_frac", 0.2))
+        if meta.get("train_key") not in (None, split.key):
+            raise RuntimeError(f"{run.tag}: rebuilt split {split.key} is not the one the models "
+                               f"trained on ({meta['train_key']}), refusing to score it")
         print(f"{run.tag}: predicting {int(split.test.sum()):,} held-out cells", flush=True)
         evaluate(run, adata[split.test].copy(), label_cols, min_n)
         run.write_meta({**meta, "dataset": dataset, "tag": run.tag, "label_cols": list(label_cols),

@@ -6,6 +6,8 @@ To reproduce results, set parameters in `hvg_selection.ipynb`'s cells. The code 
 
 Note: `results/`, `figures/` and `tables/` ship with the repo, `runs/` and `runs_repeats` do not. The selection cells will only read the cached scores but the downstream cells will train all models.
 
+Note: train/test splits hold out whole donors (`Dataset.donor_col`, see `runs.make_split`). `figures_legacy/` keeps the accuracy and macro-F1 figures of the earlier runs, whose cell-level splits put cells of the same donor on both sides.
+
 
 ## Install & run
 

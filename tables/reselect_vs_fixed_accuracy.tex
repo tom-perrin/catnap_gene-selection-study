@@ -1,0 +1,33 @@
+% needs \usepackage{booktabs} and \usepackage[table]{xcolor}
+\definecolor{palegreen}{HTML}{DDF2D6}
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrr}
+\toprule
+ & & \multicolumn{2}{c}{L1} & \multicolumn{2}{c}{L2} & \multicolumn{2}{c}{L3} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+selector & $n$ & reselect & fixed & reselect & fixed & reselect & fixed \\
+\midrule
+\multicolumn{8}{l}{\textit{AIFI}} \\
+f\_statistic & 300 & 0.9968 & \textbf{0.9970} & \textbf{0.9311} & 0.9169 & \textbf{0.8562} & 0.8058 \\
+ & 2000 & \cellcolor{palegreen}0.9973$^\dagger$ & \cellcolor{palegreen}0.9973$^\dagger$ & \cellcolor{palegreen}\textbf{0.9490$^\dagger$} & \cellcolor{palegreen}0.9479$^\dagger$ & \cellcolor{palegreen}\textbf{0.8791$^\dagger$} & \cellcolor{palegreen}0.8693$^\dagger$ \\
+\addlinespace
+seurat\_v3\_shareloess & 300 & 0.9937 & 0.9937 & \textbf{0.9112} & 0.7853 & \textbf{0.8199} & 0.6680 \\
+ & 2000 & \cellcolor{palegreen}0.9973$^\dagger$ & \cellcolor{palegreen}0.9973$^\dagger$ & \textbf{0.9460$^\dagger$} & 0.9458$^\dagger$ & 0.8648$^\dagger$ & \textbf{0.8675$^\dagger$} \\
+\midrule
+\multicolumn{8}{l}{\textit{Hao}} \\
+f\_statistic & 300 & 0.9757$^\dagger$ & \textbf{0.9765$^\dagger$} & \cellcolor{palegreen}\textbf{0.9388$^\dagger$} & 0.9252$^\dagger$ & \cellcolor{palegreen}\textbf{0.8271$^\dagger$} & 0.7852$^\dagger$ \\
+ & 2000 & 0.9769$^\dagger$ & \cellcolor{palegreen}\textbf{0.9806$^\dagger$} & 0.9365$^\dagger$ & \cellcolor{palegreen}\textbf{0.9380$^\dagger$} & \textbf{0.7935$^\dagger$} & 0.7928$^\dagger$ \\
+\addlinespace
+kruskal\_wallis & 300 & 0.9727$^\dagger$ & \textbf{0.9754$^\dagger$} & \textbf{0.9384$^\dagger$} & 0.9265$^\dagger$ & \textbf{0.8255$^\dagger$} & 0.7499$^\dagger$ \\
+ & 2000 & 0.9774$^\dagger$ & \textbf{0.9800$^\dagger$} & 0.9368$^\dagger$ & \textbf{0.9376$^\dagger$} & 0.7943$^\dagger$ & \cellcolor{palegreen}\textbf{0.7951$^\dagger$} \\
+\addlinespace
+seurat\_v3\_shareloess & 300 & 0.9698$^\dagger$ & 0.9698$^\dagger$ & \textbf{0.9230$^\dagger$} & 0.8956$^\dagger$ & \textbf{0.7762$^\dagger$} & 0.7410$^\dagger$ \\
+ & 2000 & \cellcolor{palegreen}0.9790$^\dagger$ & 0.9790$^\dagger$ & 0.9306$^\dagger$ & \textbf{0.9348$^\dagger$} & 0.7573$^\dagger$ & \textbf{0.7859$^\dagger$} \\
+\bottomrule
+\end{tabular}
+\caption{Accuracy per taxonomy level, per-node reselection vs a single fixed\_global selection (logistic-regression node models). Values are means over 10 stratified 80/20 splits; $^\dagger$ marks configurations with a single split (seed 0) only. Bold = better arm of the pair at that level; shaded = best value of the column within each dataset.}
+\label{tab:reselect-vs-fixed-accuracy}
+\end{table}
