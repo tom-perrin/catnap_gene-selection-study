@@ -11,9 +11,7 @@
   "n_top": 2000,
   "params": {
     "f_stat": {},
-    "kw": {
-      "gene_block": 128
-    },
+    "kw": {},
     "vst": {}
   }
 }

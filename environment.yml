@@ -17,7 +17,7 @@ dependencies:
   - scikit-misc=0.5.2
 
   - scikit-learn=1.7.2
-  - lightgbm=4.6.0
+  - lightgbm=4.6.0=cuda*
 
   - matplotlib-base=3.11.0
 

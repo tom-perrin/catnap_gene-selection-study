@@ -4,9 +4,8 @@ Per-node HVG reselection vs single global selection, in catnap_core.
 
 To reproduce results, set parameters in `hvg_selection.ipynb`'s cells. The code used is in `hvgsel/`.
 
-Note: `results/`, `figures/` and `tables/` ship with the repo, `runs/` and `runs_repeats` do not. The selection cells will only read the cached scores but the downstream cells will train all models.
-
-Note: train/test splits hold out whole donors (`Dataset.donor_col`, see `runs.make_split`). `figures_legacy/` keeps the accuracy and macro-F1 figures of the earlier runs, whose cell-level splits put cells of the same donor on both sides.
+Note: `results/`, `figures/` and `tables/` ship with the repo but `runs/` and `runs_cv/` do not.
+`runs_legacy/`, `results_legacy/` and `figures_legacy/` keep the earlier runs, whose cell-level splits put cells of the same donor on both sides.
 
 
 ## Install & run

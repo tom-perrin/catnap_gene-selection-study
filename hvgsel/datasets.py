@@ -58,7 +58,7 @@ DATASETS = {
         raw_source=("raw", None),   # .X is z-scaled and unusable; counts live in .raw.X (uint16)
         symbol_col=None,
         config_file="config_aifi.yml",
-        donor_col="subject.subjectGuid",   # to confirm against the h5ad's obs
+        donor_col="subject.subjectGuid",   # 108 donors, one sample kit each
         methods=("f_stat", "vst"),  # kw densifies the matrix and is too slow on AIFI
         examples=dict(nodes=["T cell", "Treg"],
                       pairs=[("Monocyte", "NK cell"), ("Naive CD4 T cell", "Naive CD8 T cell")],
@@ -75,6 +75,16 @@ DATASETS = {
         examples=dict(nodes=["CD4 T", "Treg"],
                       pairs=[("Mono", "NK"), ("CD4 T", "CD8 T")],
                       cl_nodes=["root", "CD4 T"]),
+    ),
+    "yazar": Dataset(
+        name="yazar",
+        path="/home/baia/data/SIRA-CT/6_yazar/yazar.h5ad",
+        label_cols=["cell_type"],
+        raw_source=("raw",None),
+        symbol_col=None,
+        config_file="config_yazar.yml",
+        donor_col="donor_id",
+        examples=dict(),
     ),
 }
 

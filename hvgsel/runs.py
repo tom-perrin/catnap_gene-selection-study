@@ -8,9 +8,13 @@ A Run owns runs/<dataset>/<tag>/ and holds the two arms of one comparison:
     fixed_global/         the same, gene space restricted to the root selection
     scores.csv            accuracy and macro-F1 per level, per arm
     breakdown_L*.csv      per-node split accuracy of both arms
+    predictions.csv.gz    per held-out cell: donor, true label per level, both arms' predictions
 
 Training is skipped when a completed models/ is already there, so re-running the notebook reuses
-the saved models. Predictions are not stored, they follow from the models and the seeded split.
+the saved models.
+
+Cross-validated runs (run_folds) live under their own root, one directory per fold,
+<tag>_fold<k>.
 
 Note: everything here writes to disk, nothing draws. Figures and tables are report.py.
 """
@@ -23,6 +27,7 @@ import json
 import re
 import shutil
 import tempfile
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -52,7 +57,7 @@ ARMS = ("reselect", "fixed_global")         # (treatment, baseline) -- drives ev
 TRAIN_ORDER = ("fixed_global", "reselect")  # cheapest first, so a crash costs less
 
 BASELINES = "_baselines"   # shared cache of fixed_global gene rankings, per dataset
-TAG_PATTERN = re.compile(r"^(?P<hvg>.+)_(?P<n_hvg>\d+)hvg_(?P<backend>[^_]+)$")
+TAG_PATTERN = re.compile(r"^(?P<hvg>.+)_(?P<n_hvg>\d+)hvg_(?P<backend>[^_]+)(?:_fold(?P<fold>\d+))?$")
 
 # HVG blocks a configuration variant can be built with, and the root selection defining its
 # fixed_global arm. The baseline always matches the method under test.
@@ -79,7 +84,7 @@ LGBM_PARAMS = {
     "min_child_samples": 20,
     "colsample_bytree": 1.0,
     "n_jobs": -1,
-    "device": "cpu",                # the CUDA driver/NVML versions disagree on this host
+    "device": "cuda",               # explicit, "auto" needs torch to see the GPU and falls back to cpu
     "early_stopping_patience": 20,  # most nodes stop far short of n_estimators
     "validation_size": 0.1,
     "seed": 0,
@@ -327,11 +332,24 @@ def breakdown(truth, pred, levels, by: int, min_n: int = 20) -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values("delta", ascending=False).reset_index(drop=True)
 
 
-def evaluate(run: Run, adata_test, label_cols, min_n: int = 20) -> pd.DataFrame:
-    """Predict the held-out cells with both arms, write scores.csv and breakdown_*.csv."""
+def write_predictions(run: Run, truth, pred, donors=None) -> None:
+    """Every held-out cell's truth and both arms' predictions, one row per cell."""
+    table = truth.add_prefix("true_")
+    if donors is not None:
+        table.insert(0, "donor", np.asarray(donors).astype(str))
+    for arm in ARMS:
+        table = table.join(pred[arm].add_prefix(f"{arm}_"))
+    table.rename_axis("cell").to_csv(run.dir / "predictions.csv.gz")
+
+
+def evaluate(run: Run, adata_test, label_cols, min_n: int = 20,
+             donor_col: str | None = None) -> pd.DataFrame:
+    """Predict the held-out cells with both arms, write scores, breakdowns and predictions."""
     pred = run.predict(adata_test)
     truth = truth_table(adata_test, label_cols)
     levels = list(truth.columns)
+    write_predictions(run, truth, pred,
+                      adata_test.obs[donor_col].to_numpy() if donor_col else None)
 
     scores = score_levels(truth, pred, levels)
     run.write("scores", scores)
@@ -369,8 +387,11 @@ def baseline_selection(adata_train, label_cols, spec: Score, n_top: int, cache_d
         # every gene in var order, which would not be a ranking
         ranking = select_genes(adata_train, taxonomy, spec, adata_train.n_vars - 1)
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"spec": spec.spec, "split": split.meta,
-                                    "n_genes": adata_train.n_vars, "ranking": ranking}, indent=1))
+        # written aside then renamed, so a run in another process never reads it half-written
+        staged = path.with_suffix(f".{uuid.uuid4().hex}.tmp")
+        staged.write_text(json.dumps({"spec": spec.spec, "split": split.meta,
+                                      "n_genes": adata_train.n_vars, "ranking": ranking}, indent=1))
+        staged.replace(path)
         print(f"baseline {spec.name}: cached to {path}")
     return ranking[:n_top]
 
@@ -408,7 +429,7 @@ def compare_arms(adata, dataset: str, label_cols, config_path, baseline: Score, 
         run.train(adata_train, label_cols, config_path, genes, force=force)
         del adata_train
 
-    evaluate(run, adata_test, label_cols, min_n)
+    evaluate(run, adata_test, label_cols, min_n, split.donor_col)
     run.write_meta({**run.meta, "dataset": dataset, "tag": run.tag, "label_cols": list(label_cols),
                     "config": str(config_path), "n_hvg": int(n_hvg),
                     "baseline": baseline.spec, "n_genes": int(adata.n_vars), **split.meta})
@@ -478,32 +499,31 @@ def run_variants(adata, dataset: str, label_cols, source_config, configs, root="
     return runs
 
 
-def run_repeats(adata, dataset: str, label_cols, source_config, hvg: str, n_top: int,
-                seeds=range(10), root="runs_repeats", hvg_params: dict | None = None,
-                backend: str | None = None, backend_params: dict | None = None,
-                **kwargs) -> list[Run]:
+def run_folds(adata, dataset: str, label_cols, source_config, hvg: str, n_top: int,
+              donor_col: str, n_folds=5, folds=None, seed=0, root="runs_cv",
+              hvg_params: dict | None = None, backend: str | None = None,
+              backend_params: dict | None = None, **kwargs) -> list[Run]:
     """
-    One configuration re-run over seeds, to size the noise on each per-node gain.
+    One configuration cross-validated over donor folds, to size the noise on each per-node gain.
 
-    A single run shows a gain per node but not whether it reproduces. Each repeat draws its own
-    stratified split, which re-draws the HVG selection, both arms' models and the held-out cells
-    together. The logit backend is deterministic given its data, so the split is the only thing
-    worth varying.
+    A single run shows a gain per node but not whether it reproduces. The donors are dealt once
+    into n_folds groups (make_split, seed fixed), and each fold holds one group out, so every
+    donor is tested exactly once and no two folds share a test cell. Each fold re-draws the HVG
+    selection, both arms' models and the held-out cells together.
 
-    Monte Carlo rather than K-fold, because the test fraction is then independent of the repeat
-    count: 20% held out estimates a node's accuracy far more tightly than the 10% a 10-fold
-    design would force, and that is where the noise question is sharpest.
+    folds picks which of the n_folds to run, None runs them all. Fold 0 is the split of the
+    matching single-split runs/ run, so it doubles as a consistency check.
 
-    Note: repeats share training cells, so their spread is a noise diagnostic, not a standard
-    error. Seed 0 draws the split of the matching runs/ run, so it doubles as a consistency check.
-    root is separate to keep the cross-run tables one row per configuration.
+    Note: folds share 3/4 of their training donors, so their spread is a noise diagnostic, not an
+    independent standard error. root is separate to keep the cross-run tables one row per
+    configuration.
     """
     staged = _dump(variant_config(source_config, hvg, n_top, hvg_params, backend, backend_params))
     base = config_tag(staged)
 
     runs = []
-    for seed in seeds:
-        tag = f"{base}_seed{seed}"
+    for fold in (range(n_folds) if folds is None else folds):
+        tag = f"{base}_fold{fold}"
         destination = Path(root) / dataset / tag
         destination.mkdir(parents=True, exist_ok=True)
         shutil.copy(staged, destination / "config.yml")
@@ -511,7 +531,8 @@ def run_repeats(adata, dataset: str, label_cols, source_config, hvg: str, n_top:
         print(f"\n===== {tag} =====", flush=True)
         runs.append(compare_arms(adata, dataset, label_cols, destination / "config.yml",
                                  baseline=BASELINE[hvg], n_hvg=n_top, root=root, tag=tag,
-                                 seed=seed, **kwargs))
+                                 donor_col=donor_col, n_folds=n_folds, fold=fold, seed=seed,
+                                 **kwargs))
     staged.unlink()
     return runs
 
@@ -546,7 +567,7 @@ def refresh_runs(adata, dataset: str, label_cols, root="runs", min_n=20, tags=No
             raise RuntimeError(f"{run.tag}: rebuilt split {split.key} is not the one the models "
                                f"trained on ({meta['train_key']}), refusing to score it")
         print(f"{run.tag}: predicting {int(split.test.sum()):,} held-out cells", flush=True)
-        evaluate(run, adata[split.test].copy(), label_cols, min_n)
+        evaluate(run, adata[split.test].copy(), label_cols, min_n, split.donor_col)
         run.write_meta({**meta, "dataset": dataset, "tag": run.tag, "label_cols": list(label_cols),
                         "n_genes": int(adata.n_vars), **split.meta})
         runs.append(run)

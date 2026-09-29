@@ -1,23 +1,31 @@
 \begin{table}[t]
 \centering
 \small
-\begin{tabular}{lrlrrrrrr}
+\begin{tabular}{llrrrrrr}
 \toprule
- &  &  & \multicolumn{2}{c}{L1} & \multicolumn{2}{c}{L2} & \multicolumn{2}{c}{L3} \\
-\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
-HVG method & $n$ & model & reselect & fixed & reselect & fixed & reselect & fixed \\
+ &  & \multicolumn{2}{c}{L1} & \multicolumn{2}{c}{L2} & \multicolumn{2}{c}{L3} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
+HVG method & model & reselect & fixed & reselect & fixed & reselect & fixed \\
 \midrule
-f\_statistic & 300 & lgbm & 0.9935 & \textbf{0.9943} & \textbf{0.9218} & 0.9118 & \textbf{0.8542} & 0.8091 \\
-f\_statistic & 300 & logit & 0.9968 & \textbf{0.9970} & \textbf{0.9313} & 0.9172 & \textbf{0.8566} & 0.8062 \\
-f\_statistic & 2000 & lgbm & 0.9934 & \textbf{0.9937} & 0.9316 & \textbf{0.9330} & \textbf{0.8733} & 0.8659 \\
-f\_statistic & 2000 & logit & \underline{0.9973} & \underline{0.9973} & \underline{\textbf{0.9490}} & 0.9479 & \underline{\textbf{0.8791}} & 0.8693 \\
+\multicolumn{8}{l}{\emph{300 HVGs, mean $\pm$ s.d. over 5 donor folds}} \\
+f\_statistic & logit & 0.9967 & \underline{\textbf{0.9969}} & \underline{\textbf{0.9304}} & 0.9166 & \underline{\textbf{0.8546}} & 0.8042 \\
+ &  & {\scriptsize$\pm$0.0004} & {\scriptsize$\pm$0.0005} & {\scriptsize$\pm$0.0026} & {\scriptsize$\pm$0.0028} & {\scriptsize$\pm$0.0031} & {\scriptsize$\pm$0.0059} \\[1pt]
+ & lgbm & 0.9934 & 0.9939 & \textbf{0.9222} & 0.9104 & \textbf{0.8524} & 0.8053 \\
+ &  & {\scriptsize$\pm$0.0007} & {\scriptsize$\pm$0.0007} & {\scriptsize$\pm$0.0028} & {\scriptsize$\pm$0.0035} & {\scriptsize$\pm$0.0030} & {\scriptsize$\pm$0.0062} \\[1pt]
+\addlinespace
+seurat\_v3 & logit & 0.9934 & 0.9934 & \textbf{0.9085} & 0.7832 & \textbf{0.8164} & 0.6659 \\
+ &  & {\scriptsize$\pm$0.0013} & {\scriptsize$\pm$0.0013} & {\scriptsize$\pm$0.0051} & {\scriptsize$\pm$0.0158} & {\scriptsize$\pm$0.0060} & {\scriptsize$\pm$0.0160} \\[1pt]
+ & lgbm & 0.9908 & 0.9907 & \textbf{0.9095} & 0.7979 & \textbf{0.8264} & 0.6859 \\
+ &  & {\scriptsize$\pm$0.0015} & {\scriptsize$\pm$0.0014} & {\scriptsize$\pm$0.0048} & {\scriptsize$\pm$0.0135} & {\scriptsize$\pm$0.0048} & {\scriptsize$\pm$0.0141} \\[1pt]
 \midrule
-seurat\_v3\_shareloess & 300 & lgbm & 0.9913 & 0.9913 & \textbf{0.9110} & 0.7989 & \textbf{0.8292} & 0.6858 \\
-seurat\_v3\_shareloess & 300 & logit & 0.9937 & 0.9937 & \textbf{0.9105} & 0.7852 & \textbf{0.8194} & 0.6660 \\
-seurat\_v3\_shareloess & 2000 & lgbm & 0.9928 & 0.9928 & \textbf{0.9327} & 0.9307 & \textbf{0.8671} & 0.8646 \\
-seurat\_v3\_shareloess & 2000 & logit & \underline{0.9973} & \underline{0.9973} & \textbf{0.9460} & 0.9458 & 0.8648 & \textbf{0.8675} \\
+\multicolumn{8}{l}{\emph{2000 HVGs, one donor split}} \\
+f\_statistic & logit & 0.9970 & \underline{\textbf{0.9972}} & \underline{\textbf{0.9501}} & 0.9488 & \underline{\textbf{0.8768}} & 0.8677 \\
+ & lgbm & 0.9941 & \textbf{0.9945} & 0.9341 & \textbf{0.9357} & \textbf{0.8718} & 0.8646 \\
+\addlinespace
+seurat\_v3 & logit & 0.9971 & 0.9971 & \textbf{0.9477} & 0.9465 & 0.8649 & \textbf{0.8662} \\
+ & lgbm & \textbf{0.9940} & 0.9932 & 0.9332 & \textbf{0.9333} & 0.8642 & \textbf{0.8647} \\
 \bottomrule
 \end{tabular}
-\caption{aifi: accuracy per taxonomy level, per-node reselection vs a single fixed\_global set. Bold = better arm of the pair, underline = best for the level.}
+\caption{aifi: accuracy per taxonomy level, per-node reselection vs a single fixed\_global set. Folds hold out whole donors, the single split is fold 0 of the same five. Bold = the arm better in every fold, underline = best of the level within a budget.}
 \label{tab:comparison-aifi-accuracy}
 \end{table}

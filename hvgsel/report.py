@@ -4,10 +4,14 @@ Figures and tables of the downstream experiment, read back from what runs.py wro
 Nothing here trains or predicts. Every function takes Run objects, or the tidy frame runs_table
 builds out of every scores.csv on disk, and returns a figure or a LaTeX table.
 
-Four figures share one reading: one horizontal row per node, one panel per level pair, coloured
+Five figures share one reading: one horizontal row per node, one panel per level pair, coloured
 by whether re-selection helps that node. They are built on the same skeleton (_grid, _axis,
 _range_row, _xpad, _finish), and differ in the anchor each row is measured from and in the
 verdict its colour states.
+
+Cross-validated configurations (runs_cv/) sit in the same tidy frame as the single-split ones,
+one row set per fold. fold_frame folds them back into one row per configuration, which is what
+the comparison table and level_gain_figure read.
 """
 
 # IMPORTS
@@ -29,6 +33,12 @@ from hvgsel.runs import ARMS, TAG_PATTERN, Run
 
 C_RESELECT, C_FIXED = "#2a78d6", "#e34948"
 C_FLIP = "#9a9a9a"     # a node whose gain changes sign across repeats, within split noise
+C_BAND = "#f4f4f4"     # every other node, where several sub-rows share one node label
+
+# One colour per gene budget, smallest first. Clear of the blue/red verdict pair so a colour keeps
+# one meaning across the figures, and apart under protan/deutan/tritan simulation (OKLab dE >= 29)
+# and in lightness, so the pair survives a greyscale print.
+BUDGET_COLOURS = ("#eb6834", "#4a3aa7")
 
 BACKEND_MARK = {"logit": "o", "lgbm": "s"}   # fixed, a backend keeps its marker across figures
 # Where a figure shows both at once, the marker's fill is the HVG method: solid for the supervised
@@ -43,19 +53,27 @@ ACC_LABEL = "accuracy within node"
 
 # --- Reading the runs ------------------------------------------------
 
-def runs_table(root="runs") -> pd.DataFrame:
-    """Every saved run's per-level scores in one tidy frame, the cross-configuration table."""
+def runs_table(*roots) -> pd.DataFrame:
+    """
+    Every saved run's per-level scores in one tidy frame, the cross-configuration table.
+
+    Several roots read into one frame, runs/ and runs_cv/ say, a fold's rows told apart by fold.
+    No root reads runs/.
+    """
+    roots = roots or ("runs",)
     rows = []
-    for scores_path in sorted(Path(root).glob("*/*/scores.csv")):
-        run = Run(scores_path.parents[2], scores_path.parents[1].name, scores_path.parent.name)
-        parts = TAG_PATTERN.match(run.tag)
-        if parts is None:
-            raise ValueError(f"run directory '{run.tag}' is not <hvg>_<n>hvg_<backend>")
-        rows.append(run.read("scores").assign(
-            dataset=run.dataset, tag=run.tag, hvg=parts["hvg"], backend=parts["backend"],
-            n_hvg=int(parts["n_hvg"]), models_saved=bool(run.meta.get("models_saved", run.trained))))
+    for root in roots:
+        for scores_path in sorted(Path(root).glob("*/*/scores.csv")):
+            run = Run(scores_path.parents[2], scores_path.parents[1].name, scores_path.parent.name)
+            parts = TAG_PATTERN.match(run.tag)
+            if parts is None:
+                raise ValueError(f"run directory '{run.tag}' is not <hvg>_<n>hvg_<backend>[_fold<k>]")
+            rows.append(run.read("scores").assign(
+                dataset=run.dataset, tag=run.tag, hvg=parts["hvg"], backend=parts["backend"],
+                n_hvg=int(parts["n_hvg"]), fold=run.meta.get("fold"),
+                models_saved=bool(run.meta.get("models_saved", run.trained))))
     if not rows:
-        raise FileNotFoundError(f"no runs under {root}/")
+        raise FileNotFoundError(f"no runs under {', '.join(f'{root}/' for root in roots)}")
     return pd.concat(rows, ignore_index=True)
 
 
@@ -79,6 +97,52 @@ def repeat_levels(runs, metric="accuracy") -> pd.DataFrame:
     return wide.groupby("level").agg(["mean", "std", "min", "max", "count"])
 
 
+def fold_frame(table: pd.DataFrame, dataset: str, metric="accuracy") -> pd.DataFrame:
+    """
+    (budget, HVG method, backend, level) x (reselect, fixed_global, delta) x statistic, over each
+    configuration's runs: its donor folds when cross-validated, its one split otherwise.
+
+    Rows run budget by budget, supervised methods first. Each arm and the gain get a mean and an
+    s.d., NaN for a single split, and the gain also n, gain and loss: how many folds, and how many
+    on either side of zero.
+
+    Note: the gain is paired, taken within a fold before it is averaged. The arms share the fold's
+    donors and move together, so its spread is far tighter than either arm's, and the arm spreads
+    say nothing on whether one arm beats the other.
+    """
+    block = table[table["dataset"] == dataset]
+    if block.empty:
+        raise KeyError(f"no runs for dataset {dataset!r}")
+    config, keys = ["n_hvg", "hvg", "backend"], ["n_hvg", "hvg", "backend", "fold", "level"]
+    if block.duplicated([*keys, "arm"]).any():
+        raise ValueError(f"{dataset}: a configuration holds one fold twice, "
+                         "read from both runs/ and runs_cv/?")
+    per_fold = block.set_index([*keys, "arm"])[metric].unstack("arm")[list(ARMS)]
+    per_fold["delta"] = per_fold[ARMS[0]] - per_fold[ARMS[1]]
+
+    grouped = per_fold.groupby([*config, "level"])
+    out = grouped.agg(["mean", "std"])
+    out[("delta", "n")] = grouped["delta"].count()
+    out[("delta", "gain")] = grouped["delta"].agg(lambda gains: int((gains > 0).sum()))
+    out[("delta", "loss")] = grouped["delta"].agg(lambda gains: int((gains < 0).sum()))
+    order = sorted(out.index, key=lambda row: (row[0], *_config_key(row[1], row[2]), row[3]))
+    return out.reindex(order)
+
+
+def fold_note(counts) -> str:
+    """
+    How a budget's rows were measured, from its per-configuration fold counts.
+
+    Note: $\\pm$ is read by LaTeX and by matplotlib's mathtext alike, the table and the figure
+    legend share the phrase.
+    """
+    n = sorted({int(count) for count in counts})
+    if n == [1]:
+        return "one donor split"
+    span = str(n[0]) if len(n) == 1 else f"{n[0]}-{n[-1]}"
+    return rf"mean $\pm$ s.d. over {span} donor folds"
+
+
 def config_label(tag: str) -> str:
     """f_statistic_0300hvg_lgbm -> 'f_statistic x lgbm', naming a cross-configuration column."""
     parts = TAG_PATTERN.match(tag)
@@ -86,14 +150,39 @@ def config_label(tag: str) -> str:
 
 
 def config_title(dataset: str, runs, n_hvg: int) -> str:
-    """The configurations named as the grid they cover when they cover one, else listed."""
+    """
+    The configurations named as the grid they cover when they cover one, else listed.
+
+    Folds of one configuration count once, and their number is named after it.
+    """
     parts = [TAG_PATTERN.match(run.tag) for run in runs]
+    configs = list(dict.fromkeys(config_label(run.tag) for run in runs))
     methods = list(dict.fromkeys(p["hvg"].replace("_shareloess", "") for p in parts))
     backends = list(dict.fromkeys(p["backend"] for p in parts))
     grid = f"{', '.join(methods)}  $\\times$  {', '.join(backends)}"
-    if len(methods) * len(backends) != len(runs):
-        grid = ", ".join(config_label(run.tag) for run in runs)
-    return f"{dataset}, {n_hvg} HVGs: {len(runs)} configurations   ({grid})"
+    if len(methods) * len(backends) != len(configs):
+        grid = ", ".join(configs)
+    folds = {p["fold"] for p in parts} - {None}
+    reruns = f" $\\times$ {len(folds)} donor folds" if folds else ""
+    return f"{dataset}, {n_hvg} HVGs: {len(configs)} configurations{reruns}   ({grid})"
+
+
+def _config_key(hvg: str, backend: str) -> tuple:
+    """Supervised HVG methods first, then by name, and the backends in BACKEND_MARK's order."""
+    backends = list(BACKEND_MARK)
+    return (not hvg.startswith(SUPERVISED_HVG), hvg,
+            backends.index(backend) if backend in backends else len(backends), backend)
+
+
+def _verdict(gains: np.ndarray) -> np.ndarray:
+    """
+    Per row of gains, blue when none of its columns loses, red when none gains, grey when both
+    happen. NaN counts as neither, and a row unchanged everywhere is grey, ties break neither way.
+    """
+    wins, losses = (gains > 0).sum(axis=1), (gains < 0).sum(axis=1)
+    colours = np.where(losses == 0, C_RESELECT, np.where(wins == 0, C_FIXED, C_FLIP))
+    colours[(wins == 0) & (losses == 0)] = C_FLIP
+    return colours
 
 
 # --- Shared per-node panel -------------------------------------------
@@ -289,10 +378,8 @@ def config_breakdown_figure(runs, levels, labels=None, path=None, width=figures.
     for ax, (label, deltas) in zip(axes, blocks):
         y = _rows(tallest, len(deltas))
         gains = deltas.to_numpy()
-        wins, losses = (gains > 0).sum(axis=1), (gains < 0).sum(axis=1)   # NaN counts as neither
         means = np.nanmean(gains, axis=1)
-        colours = np.where(losses == 0, C_RESELECT, np.where(wins == 0, C_FIXED, C_FLIP))
-        colours[(wins == 0) & (losses == 0)] = C_FLIP                    # unchanged everywhere
+        colours = _verdict(gains)
 
         ax.axvline(0, color="#1a1a1a", lw=0.8, zorder=1)
         for yy, row, gain, colour in zip(y, gains, means, colours):
@@ -318,6 +405,76 @@ def config_breakdown_figure(runs, levels, labels=None, path=None, width=figures.
                            markerfacecolor=to_rgba("#6a6a6a", fill), markeredgewidth=0.7,
                            markeredgecolor="#6a6a6a") for (mark, fill), name in zip(styles, labels)]
     # three rows: the verdicts fill the first column, the configurations the rest
+    return _finish(figure, handles, -(-len(handles) // 3), path, title)
+
+
+def fold_breakdown_figure(runs, levels, path=None, width=figures.FULL, row_height=0.30,
+                          min_height=2.0, spread=0.66, title=None):
+    """
+    config_breakdown_figure with every fold of every configuration drawn, the folds of runs_cv/.
+
+    A node's row splits into one sub-row per configuration, spread over `spread` of the row, in
+    the same styles: shape is the backend, fill the HVG method. A sub-row holds one marker per
+    fold, their range as a line and their mean as a bar, on the gain axis.
+
+    Note: colour is the verdict per configuration, over its folds, where config_breakdown_figure
+    states one across configurations: blue when every fold of that configuration gains on the
+    node, red when every one loses, grey when the sign flips. A node gaining whatever the
+    configuration is then a row of blue sub-rows. Nodes are ordered by their mean gain over every
+    run, and a node a run did not score leaves that run's marker out.
+    """
+    folds = {}
+    for run in runs:
+        parts = TAG_PATTERN.match(run.tag)
+        folds.setdefault((parts["hvg"], parts["backend"]), []).append(run.tag)
+    configs = sorted(folds, key=lambda config: _config_key(*config))
+    offsets = np.linspace(spread / 2, -spread / 2, len(configs)) if len(configs) > 1 else [0.0]
+
+    blocks = []
+    for by in range(len(levels) - 1):
+        deltas = repeat_deltas(runs, levels, by).dropna(how="all")
+        order = deltas.mean(axis=1).sort_values(ascending=False).index
+        blocks.append((f"{levels[by + 1]} gain by true {levels[by]}", deltas.loc[order]))
+
+    tallest = max(len(deltas) for _, deltas in blocks)
+    figure, axes = _grid(len(blocks), tallest, width, row_height, min_height, pad_y=0.6,
+                         title=title)
+
+    handles = [plt.Line2D([], [], color=C_RESELECT, lw=1.2, label="gain in every fold"),
+               plt.Line2D([], [], color=C_FIXED, lw=1.2, label="loss in every fold"),
+               plt.Line2D([], [], color=C_FLIP, lw=1.2, label="sign flips across folds")]
+    for ax, (label, deltas) in zip(axes, blocks):
+        y = _rows(tallest, len(deltas))
+        for yy in y[::2]:
+            ax.axhspan(yy - 0.5, yy + 0.5, color=C_BAND, lw=0, zorder=0)
+        ax.axvline(0, color="#1a1a1a", lw=0.8, zorder=1)
+
+        for offset, (hvg, backend) in zip(offsets, configs):
+            mark = BACKEND_MARK.get(backend, "D")
+            fill = HVG_FILL.get(hvg.replace("_shareloess", ""), 0.5)
+            gains = deltas[folds[(hvg, backend)]].to_numpy()
+            colours, rows = _verdict(gains), y + offset
+            for yy, row, colour in zip(rows, gains, colours):
+                row = row[~np.isnan(row)]
+                if row.size:
+                    ax.plot([row.min(), row.max()], [yy, yy], color=colour, lw=0.8, alpha=0.5,
+                            solid_capstyle="round", zorder=2)
+                    ax.scatter([row.mean()], [yy], s=16, marker="|", color=colour, lw=0.9,
+                               zorder=5)
+            colour = np.repeat(colours, gains.shape[1])
+            ax.scatter(gains.ravel(), np.repeat(rows, gains.shape[1]), s=9, marker=mark,
+                       linewidths=0.6, edgecolors=[to_rgba(c, 0.9) for c in colour],
+                       facecolors=[to_rgba(c, 0.8 * fill) for c in colour], zorder=4)
+
+        _axis(ax, y, deltas.index, GAIN_LABEL, label)
+        _xpad(ax, min(0, np.nanmin(deltas)), max(0, np.nanmax(deltas)))
+
+    for hvg, backend in configs:
+        method = hvg.replace("_shareloess", "")
+        handles.append(plt.Line2D([], [], marker=BACKEND_MARK.get(backend, "D"), ls="", ms=3.6,
+                                  color="#6a6a6a", markeredgewidth=0.7, markeredgecolor="#6a6a6a",
+                                  markerfacecolor=to_rgba("#6a6a6a", HVG_FILL.get(method, 0.5)),
+                                  label=f"{method} x {backend}"))
     return _finish(figure, handles, -(-len(handles) // 3), path, title)
 
 
@@ -414,6 +571,70 @@ def runs_figure(table: pd.DataFrame, metric="accuracy", path=None, width=figures
         figures.save(figure, path)
     plt.show()
     return figure
+
+
+METRIC_NAME = {"accuracy": "accuracy", "macro_f1": "macro-F1"}
+
+
+def _tint(colour, fill: float):
+    """colour laid over white at opacity fill: a hollow marker that still hides the line under it."""
+    return tuple(fill * c + (1 - fill) for c in to_rgba(colour)[:3])
+
+
+def level_gain_figure(table: pd.DataFrame, dataset: str, metrics=("accuracy", "macro_f1"),
+                      path=None, width=figures.FULL, height=2.6, spread=0.56):
+    """
+    Gain over fixed_global per level, one panel per metric, every configuration at every budget.
+
+    Colour is the budget (BUDGET_COLOURS). Shape is the backend and fill the HVG method, as in the
+    per-node figures, and the line repeats the fill, solid for the supervised scores. A budget run
+    over donor folds shows the mean gain and a bar of one s.d. of the paired per-fold gain, a single
+    split its one value. The configurations are spread over `spread` of a level, so no bar hides
+    another.
+
+    Note: the folds and the single split do not hold out the same donors, the single split is fold
+    0 of the same five. Their gains compare, but not to the last digit.
+    """
+    first = fold_frame(table, dataset, metrics[0])
+    configs = list(dict.fromkeys(row[:3] for row in first.index))   # fold_frame's order
+    # sorted for the lookups below, an index in fold_frame's order is not lexsorted
+    stats = {metric: fold_frame(table, dataset, metric).sort_index() for metric in metrics}
+    levels = list(dict.fromkeys(first.index.get_level_values("level")))
+    budgets = list(dict.fromkeys(n_hvg for n_hvg, _, _ in configs))
+    if len(budgets) > len(BUDGET_COLOURS):
+        raise ValueError(f"{len(budgets)} budgets, BUDGET_COLOURS names {len(BUDGET_COLOURS)}")
+    colour = dict(zip(budgets, BUDGET_COLOURS))
+    offsets = np.linspace(-spread / 2, spread / 2, len(configs)) if len(configs) > 1 else [0.0]
+
+    def style(n_hvg, hvg, backend, grey=None):
+        fill = HVG_FILL.get(hvg.replace("_shareloess", ""), 0.5)
+        ink = grey or colour[n_hvg]
+        return dict(color=ink, marker=BACKEND_MARK.get(backend, "D"), ms=3.8, mew=0.7, mec=ink,
+                    mfc=_tint(ink, fill), ls="-" if fill else (0, (2.4, 1.4)), lw=0.8)
+
+    figure, axes = plt.subplots(1, len(metrics), figsize=(width, height), squeeze=False)
+    x = np.arange(len(levels))
+    for ax, metric in zip(axes[0], metrics):
+        ax.axhline(0, color="#8c8c8c", lw=0.7, zorder=1)
+        for offset, config in zip(offsets, configs):
+            rows = stats[metric].loc[config].reindex(levels)
+            ax.errorbar(x + offset, rows[("delta", "mean")], yerr=rows[("delta", "std")].fillna(0),
+                        elinewidth=0.8, capsize=0, zorder=3, **style(*config))
+        ax.set_xticks(x, levels)
+        ax.set_xlim(-0.5, len(levels) - 0.5)
+        ax.set_ylabel("reselect $-$ fixed_global")
+        ax.set_title(f"{METRIC_NAME.get(metric, metric)} gain", loc="left")
+        ax.grid(axis="y", color="#ececec")
+        ax.set_axisbelow(True)
+
+    handles = [plt.Line2D([], [], color=colour[n_hvg], lw=1.2,
+                          label=f"{n_hvg} HVGs, "
+                                + fold_note(first.loc[n_hvg][("delta", "n")]))
+               for n_hvg in budgets]
+    for hvg, backend in dict.fromkeys(config[1:] for config in configs):
+        handles.append(plt.Line2D([], [], label=f"{hvg.replace('_shareloess', '')} x {backend}",
+                                  **style(None, hvg, backend, grey="#6a6a6a")))
+    return _finish(figure, handles, -(-len(handles) // 2), path)
 
 
 def backend_frame(table: pd.DataFrame, dataset: str, metric="accuracy",
@@ -519,59 +740,60 @@ def runs_latex(table: pd.DataFrame, metric="accuracy", path=None, caption="", la
     return figures.latex_table(header, body, "llrl" + "rr" * len(levels), path, caption, label)
 
 
-def comparison_frame(table: pd.DataFrame, dataset: str, metric="accuracy") -> pd.DataFrame:
-    """
-    One dataset's models as rows, HVG method x budget with supervised first, both arms per level
-    as columns. The per-dataset comparison table, where runs_latex is the cross-dataset digest.
-    """
-    block = table[table["dataset"] == dataset]
-    if block.empty:
-        raise KeyError(f"no runs for dataset {dataset!r}")
-    wide = block.pivot_table(index=["hvg", "n_hvg", "backend"], columns=["level", "arm"],
-                             values=metric)
-    wide = wide.reindex(columns=pd.MultiIndex.from_product(
-        [sorted({level for level, _ in wide.columns}), list(ARMS)]))
-    order = sorted(wide.index, key=lambda row: (not row[0].startswith(SUPERVISED_HVG), *row))
-    return wide.reindex(order)
-
-
 def comparison_latex(table: pd.DataFrame, dataset: str, metric="accuracy", path=None,
                      caption="", label="") -> str:
     """
-    comparison_frame as LaTeX.
+    fold_frame as LaTeX: one row per configuration, both arms per level, a block per budget.
 
-    Bold marks the better arm of each pair, underline the best value in the level overall, and a
-    rule separates the supervised methods from the unsupervised ones.
+    A cross-validated budget shows each arm's mean over its folds with the s.d. in small type on
+    the line below, a single split its value. Bold marks the arm better in every fold, so on the paired gain and not
+    on the two means. A single split bolds the better arm, a tie neither. Underline marks the best
+    value of the level within the budget, whose rows share their test donors, where two budgets
+    need not. A rule separates the budgets, a gap the HVG methods.
     """
-    wide = comparison_frame(table, dataset, metric)
-    levels = list(dict.fromkeys(level for level, _ in wide.columns))
-    best = {level: wide[level].to_numpy().max() for level in levels}
+    stats = fold_frame(table, dataset, metric)
+    levels = list(dict.fromkeys(stats.index.get_level_values("level")))
     tex = lambda text: str(text).replace("_", r"\_")
 
-    header = (" & ".join(["", "", "", *(rf"\multicolumn{{2}}{{c}}{{{level}}}" for level in levels)])
+    header = (" & ".join(["", "", *(rf"\multicolumn{{2}}{{c}}{{{level}}}" for level in levels)])
               + r" \\" + "\n"
-              + "".join(rf"\cmidrule(lr){{{4 + 2 * i}-{5 + 2 * i}}}" for i in range(len(levels)))
-              + "\n" + " & ".join(["HVG method", "$n$", "model",
-                                   *sum(([r"reselect", r"fixed"] for _ in levels), [])]) + r" \\")
+              + "".join(rf"\cmidrule(lr){{{3 + 2 * i}-{4 + 2 * i}}}" for i in range(len(levels)))
+              + "\n" + " & ".join(["HVG method", "model", *["reselect", "fixed"] * len(levels)])
+              + r" \\")
 
-    body, previous_supervised = [], None
-    for (hvg, n_hvg, backend), row in wide.iterrows():
-        supervised = hvg.startswith(SUPERVISED_HVG)
-        if previous_supervised is not None and supervised != previous_supervised:
+    body = []
+    for n_hvg, budget in stats.groupby(level="n_hvg", sort=False):
+        if body:
             body.append(r"\midrule")
-        previous_supervised = supervised
-        cells = []
-        for level in levels:
-            pair = [row[(level, arm)] for arm in ARMS]
-            for value in pair:
-                text = f"{value:.4f}"
-                if value > min(pair):          # a tie bolds neither arm
-                    text = rf"\textbf{{{text}}}"
-                if value == best[level]:
-                    text = rf"\underline{{{text}}}"
-                cells.append(text)
-        body.append(" & ".join([tex(hvg), str(n_hvg), tex(backend), *cells]) + r" \\")
-    return figures.latex_table(header, body, "lrl" + "rr" * len(levels), path, caption, label)
+        note = fold_note(budget[("delta", "n")])
+        body.append(rf"\multicolumn{{{2 + 2 * len(levels)}}}{{l}}{{\emph{{{n_hvg} HVGs, {note}}}}} \\")
+        best = budget[[(arm, "mean") for arm in ARMS]].max(axis=1).groupby(level="level").max()
+
+        previous = None
+        for (hvg, backend), rows in budget.groupby(level=["hvg", "backend"], sort=False):
+            if previous is not None and hvg != previous:
+                body.append(r"\addlinespace")
+            head = tex(hvg.replace("_shareloess", "")) if hvg != previous else ""
+            previous = hvg
+            rows = rows.droplevel(["n_hvg", "hvg", "backend"])
+            cells, spreads = [], []
+            for level in levels:
+                row = rows.loc[level]
+                n = row[("delta", "n")]
+                for arm, wins in zip(ARMS, (row[("delta", "gain")], row[("delta", "loss")])):
+                    mean = row[(arm, "mean")]
+                    text = f"{mean:.4f}"
+                    if wins == n:                  # a tie bolds neither arm
+                        text = rf"\textbf{{{text}}}"
+                    if mean == best[level]:
+                        text = rf"\underline{{{text}}}"
+                    cells.append(text)
+                    spreads.append(rf"{{\scriptsize$\pm${row[(arm, 'std')]:.4f}}}" if n > 1 else "")
+            body.append(" & ".join([head, tex(backend), *cells]) + r" \\")
+            # the s.d. on a line of its own under the mean, beside it the table outgrows \textwidth
+            if any(spreads):
+                body.append(" & ".join(["", "", *spreads]) + r" \\[1pt]")
+    return figures.latex_table(header, body, "ll" + "rr" * len(levels), path, caption, label)
 
 
 def backend_latex(table: pd.DataFrame, dataset: str, metric="accuracy", arm="reselect",
