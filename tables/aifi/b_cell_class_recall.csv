@@ -1,0 +1,101 @@
+tag,hvg,n_hvg,backend,fold,node,child,n,reselect,fixed_global,delta
+f_statistic_0300hvg_lgbm_fold0,f_statistic,300,lgbm,0,B cell,Effector B cell,2428,0.5280065897858319,0.707166392092257,-0.17915980230642503
+f_statistic_0300hvg_lgbm_fold0,f_statistic,300,lgbm,0,B cell,Memory B cell,10048,0.9257563694267515,0.9193869426751592,0.006369426751592355
+f_statistic_0300hvg_lgbm_fold0,f_statistic,300,lgbm,0,B cell,Naive B cell,16307,0.9310725455325933,0.9354878273134237,-0.0044152817808303935
+f_statistic_0300hvg_lgbm_fold0,f_statistic,300,lgbm,0,B cell,Plasma cell,828,0.9939613526570048,0.9939613526570048,0.0
+f_statistic_0300hvg_lgbm_fold0,f_statistic,300,lgbm,0,B cell,Transitional B cell,2143,0.5058329444703686,0.5557629491367242,-0.049930004666355554
+f_statistic_0300hvg_lgbm_fold1,f_statistic,300,lgbm,1,B cell,Effector B cell,2317,0.5261113508847648,0.7078118256365991,-0.18170047475183426
+f_statistic_0300hvg_lgbm_fold1,f_statistic,300,lgbm,1,B cell,Memory B cell,9030,0.9165005537098561,0.9115171650055371,0.004983388704318914
+f_statistic_0300hvg_lgbm_fold1,f_statistic,300,lgbm,1,B cell,Naive B cell,19177,0.938624393805079,0.939250143400949,-0.0006257495958700288
+f_statistic_0300hvg_lgbm_fold1,f_statistic,300,lgbm,1,B cell,Plasma cell,285,0.9964912280701754,0.9929824561403509,0.0035087719298245723
+f_statistic_0300hvg_lgbm_fold1,f_statistic,300,lgbm,1,B cell,Transitional B cell,2842,0.5464461646727656,0.6161154116819142,-0.06966924700914856
+f_statistic_0300hvg_lgbm_fold2,f_statistic,300,lgbm,2,B cell,Effector B cell,1955,0.5268542199488491,0.6900255754475704,-0.1631713554987213
+f_statistic_0300hvg_lgbm_fold2,f_statistic,300,lgbm,2,B cell,Memory B cell,8952,0.9014745308310992,0.9110813226094727,-0.009606791778373536
+f_statistic_0300hvg_lgbm_fold2,f_statistic,300,lgbm,2,B cell,Naive B cell,15910,0.9409176618478944,0.9440603394091767,-0.003142677561282281
+f_statistic_0300hvg_lgbm_fold2,f_statistic,300,lgbm,2,B cell,Plasma cell,202,0.9653465346534653,0.9801980198019802,-0.014851485148514865
+f_statistic_0300hvg_lgbm_fold2,f_statistic,300,lgbm,2,B cell,Transitional B cell,2200,0.5563636363636364,0.6172727272727273,-0.06090909090909091
+f_statistic_0300hvg_lgbm_fold3,f_statistic,300,lgbm,3,B cell,Effector B cell,2245,0.489086859688196,0.6534521158129176,-0.16436525612472164
+f_statistic_0300hvg_lgbm_fold3,f_statistic,300,lgbm,3,B cell,Memory B cell,9249,0.9252892204562655,0.9261541788301438,-0.000864958373878344
+f_statistic_0300hvg_lgbm_fold3,f_statistic,300,lgbm,3,B cell,Naive B cell,16538,0.9508404885717741,0.9486636836376829,0.0021768049340911144
+f_statistic_0300hvg_lgbm_fold3,f_statistic,300,lgbm,3,B cell,Plasma cell,425,0.9882352941176471,0.9929411764705882,-0.004705882352941115
+f_statistic_0300hvg_lgbm_fold3,f_statistic,300,lgbm,3,B cell,Transitional B cell,2453,0.5299633102323685,0.6086424785976355,-0.078679168365267
+f_statistic_0300hvg_lgbm_fold4,f_statistic,300,lgbm,4,B cell,Effector B cell,2342,0.47566182749786506,0.6332194705380018,-0.1575576430401367
+f_statistic_0300hvg_lgbm_fold4,f_statistic,300,lgbm,4,B cell,Memory B cell,10347,0.9091524113269547,0.9110853387455301,-0.0019329274185754253
+f_statistic_0300hvg_lgbm_fold4,f_statistic,300,lgbm,4,B cell,Naive B cell,18487,0.9380104938605507,0.9408773732893384,-0.0028668794287877164
+f_statistic_0300hvg_lgbm_fold4,f_statistic,300,lgbm,4,B cell,Plasma cell,265,0.9811320754716981,0.9886792452830189,-0.007547169811320753
+f_statistic_0300hvg_lgbm_fold4,f_statistic,300,lgbm,4,B cell,Transitional B cell,2837,0.5311949242157208,0.5925273175890025,-0.06133239337328167
+f_statistic_0300hvg_logit_fold0,f_statistic,300,logit,0,B cell,Effector B cell,2433,0.4866420057542129,0.689272503082614,-0.2026304973284011
+f_statistic_0300hvg_logit_fold0,f_statistic,300,logit,0,B cell,Memory B cell,10105,0.9161801088570015,0.9114299851558635,0.0047501237011380315
+f_statistic_0300hvg_logit_fold0,f_statistic,300,logit,0,B cell,Naive B cell,16338,0.9342636797649652,0.9335904027420737,0.0006732770228914386
+f_statistic_0300hvg_logit_fold0,f_statistic,300,logit,0,B cell,Plasma cell,882,0.9920634920634921,0.9920634920634921,0.0
+f_statistic_0300hvg_logit_fold0,f_statistic,300,logit,0,B cell,Transitional B cell,2162,0.5055504162812211,0.5490286771507863,-0.04347826086956519
+f_statistic_0300hvg_logit_fold1,f_statistic,300,logit,1,B cell,Effector B cell,2329,0.49291541434091884,0.6745384285100902,-0.18162301416917132
+f_statistic_0300hvg_logit_fold1,f_statistic,300,logit,1,B cell,Memory B cell,9067,0.9033859049299658,0.9069151869416565,-0.003529282011690671
+f_statistic_0300hvg_logit_fold1,f_statistic,300,logit,1,B cell,Naive B cell,19221,0.9408979761718953,0.9372040996826387,0.0036938764892565645
+f_statistic_0300hvg_logit_fold1,f_statistic,300,logit,1,B cell,Plasma cell,301,0.9933554817275747,0.9933554817275747,0.0
+f_statistic_0300hvg_logit_fold1,f_statistic,300,logit,1,B cell,Transitional B cell,2864,0.549231843575419,0.6229050279329609,-0.07367318435754189
+f_statistic_0300hvg_logit_fold2,f_statistic,300,logit,2,B cell,Effector B cell,1964,0.46181262729124234,0.6384928716904277,-0.17668024439918534
+f_statistic_0300hvg_logit_fold2,f_statistic,300,logit,2,B cell,Memory B cell,9011,0.8852513594495617,0.8984574409055599,-0.01320608145599822
+f_statistic_0300hvg_logit_fold2,f_statistic,300,logit,2,B cell,Naive B cell,16000,0.9428125,0.9424375,0.0003750000000000142
+f_statistic_0300hvg_logit_fold2,f_statistic,300,logit,2,B cell,Plasma cell,216,0.9907407407407407,0.9907407407407407,0.0
+f_statistic_0300hvg_logit_fold2,f_statistic,300,logit,2,B cell,Transitional B cell,2211,0.5540479421076436,0.6182722749886929,-0.06422433288104923
+f_statistic_0300hvg_logit_fold3,f_statistic,300,logit,3,B cell,Effector B cell,2256,0.4397163120567376,0.624113475177305,-0.18439716312056736
+f_statistic_0300hvg_logit_fold3,f_statistic,300,logit,3,B cell,Memory B cell,9315,0.9123993558776168,0.9165861513687601,-0.004186795491143314
+f_statistic_0300hvg_logit_fold3,f_statistic,300,logit,3,B cell,Naive B cell,16611,0.9525615555956896,0.9514177352356872,0.0011438203600023789
+f_statistic_0300hvg_logit_fold3,f_statistic,300,logit,3,B cell,Plasma cell,449,0.9844097995545658,0.9888641425389755,-0.00445434298440972
+f_statistic_0300hvg_logit_fold3,f_statistic,300,logit,3,B cell,Transitional B cell,2472,0.526294498381877,0.6007281553398058,-0.0744336569579288
+f_statistic_0300hvg_logit_fold4,f_statistic,300,logit,4,B cell,Effector B cell,2347,0.41286749041329357,0.6165317426501917,-0.20366425223689816
+f_statistic_0300hvg_logit_fold4,f_statistic,300,logit,4,B cell,Memory B cell,10380,0.898747591522158,0.8989402697495184,-0.00019267822736035445
+f_statistic_0300hvg_logit_fold4,f_statistic,300,logit,4,B cell,Naive B cell,18538,0.9388822958247923,0.9409321393893624,-0.002049843564570053
+f_statistic_0300hvg_logit_fold4,f_statistic,300,logit,4,B cell,Plasma cell,278,1.0,0.9892086330935251,0.010791366906474864
+f_statistic_0300hvg_logit_fold4,f_statistic,300,logit,4,B cell,Transitional B cell,2844,0.5140646976090014,0.5917721518987342,-0.0777074542897328
+seurat_v3_shareloess_0300hvg_lgbm_fold0,seurat_v3,300,lgbm,0,B cell,Effector B cell,2432,0.5460526315789473,0.5550986842105263,-0.009046052631578982
+seurat_v3_shareloess_0300hvg_lgbm_fold0,seurat_v3,300,lgbm,0,B cell,Memory B cell,10082,0.8809759968260266,0.913806784368181,-0.032830787542154405
+seurat_v3_shareloess_0300hvg_lgbm_fold0,seurat_v3,300,lgbm,0,B cell,Naive B cell,16322,0.9310133562063473,0.9258056610709472,0.005207695135400092
+seurat_v3_shareloess_0300hvg_lgbm_fold0,seurat_v3,300,lgbm,0,B cell,Plasma cell,887,0.9830890642615558,0.9966178128523112,-0.013528748590755368
+seurat_v3_shareloess_0300hvg_lgbm_fold0,seurat_v3,300,lgbm,0,B cell,Transitional B cell,2158,0.4040778498609824,0.45180722891566266,-0.047729379054680277
+seurat_v3_shareloess_0300hvg_lgbm_fold1,seurat_v3,300,lgbm,1,B cell,Effector B cell,2328,0.5176116838487973,0.5575601374570447,-0.03994845360824739
+seurat_v3_shareloess_0300hvg_lgbm_fold1,seurat_v3,300,lgbm,1,B cell,Memory B cell,9039,0.8705609027547295,0.9052992587675628,-0.03473835601283326
+seurat_v3_shareloess_0300hvg_lgbm_fold1,seurat_v3,300,lgbm,1,B cell,Naive B cell,19190,0.9337675872850443,0.940333507034914,-0.006565919749869753
+seurat_v3_shareloess_0300hvg_lgbm_fold1,seurat_v3,300,lgbm,1,B cell,Plasma cell,299,0.9933110367892977,0.9966555183946488,-0.0033444816053511683
+seurat_v3_shareloess_0300hvg_lgbm_fold1,seurat_v3,300,lgbm,1,B cell,Transitional B cell,2858,0.473407977606718,0.4926522043386984,-0.019244226731980396
+seurat_v3_shareloess_0300hvg_lgbm_fold2,seurat_v3,300,lgbm,2,B cell,Effector B cell,1963,0.48242485990830364,0.5369332654100866,-0.05450840550178293
+seurat_v3_shareloess_0300hvg_lgbm_fold2,seurat_v3,300,lgbm,2,B cell,Memory B cell,8990,0.8620689655172413,0.889210233592881,-0.027141268075639657
+seurat_v3_shareloess_0300hvg_lgbm_fold2,seurat_v3,300,lgbm,2,B cell,Naive B cell,15975,0.9386541471048513,0.942660406885759,-0.004006259780907739
+seurat_v3_shareloess_0300hvg_lgbm_fold2,seurat_v3,300,lgbm,2,B cell,Plasma cell,208,0.9807692307692307,0.9807692307692307,0.0
+seurat_v3_shareloess_0300hvg_lgbm_fold2,seurat_v3,300,lgbm,2,B cell,Transitional B cell,2206,0.45693563009972804,0.47461468721668176,-0.017679057116953723
+seurat_v3_shareloess_0300hvg_lgbm_fold3,seurat_v3,300,lgbm,3,B cell,Effector B cell,2244,0.48440285204991085,0.4786096256684492,0.005793226381461625
+seurat_v3_shareloess_0300hvg_lgbm_fold3,seurat_v3,300,lgbm,3,B cell,Memory B cell,9280,0.8773706896551724,0.912823275862069,-0.03545258620689662
+seurat_v3_shareloess_0300hvg_lgbm_fold3,seurat_v3,300,lgbm,3,B cell,Naive B cell,16562,0.9465040454051443,0.9404661272793141,0.006037918125830211
+seurat_v3_shareloess_0300hvg_lgbm_fold3,seurat_v3,300,lgbm,3,B cell,Plasma cell,447,0.9932885906040269,0.9955257270693513,-0.0022371364653244186
+seurat_v3_shareloess_0300hvg_lgbm_fold3,seurat_v3,300,lgbm,3,B cell,Transitional B cell,2464,0.4419642857142857,0.4849837662337662,-0.04301948051948051
+seurat_v3_shareloess_0300hvg_lgbm_fold4,seurat_v3,300,lgbm,4,B cell,Effector B cell,2342,0.4854824935952178,0.45132365499573013,0.03415883859948765
+seurat_v3_shareloess_0300hvg_lgbm_fold4,seurat_v3,300,lgbm,4,B cell,Memory B cell,10346,0.860815774212256,0.9029576647979896,-0.04214189058573359
+seurat_v3_shareloess_0300hvg_lgbm_fold4,seurat_v3,300,lgbm,4,B cell,Naive B cell,18505,0.9390975412050797,0.9389354228586868,0.00016211834639290323
+seurat_v3_shareloess_0300hvg_lgbm_fold4,seurat_v3,300,lgbm,4,B cell,Plasma cell,266,0.9924812030075187,0.9849624060150376,0.007518796992481147
+seurat_v3_shareloess_0300hvg_lgbm_fold4,seurat_v3,300,lgbm,4,B cell,Transitional B cell,2833,0.42252029650547124,0.42322626191316626,-0.0007059654076950195
+seurat_v3_shareloess_0300hvg_logit_fold0,seurat_v3,300,logit,0,B cell,Effector B cell,2433,0.44841759145088367,0.47307850390464445,-0.024660912453760786
+seurat_v3_shareloess_0300hvg_logit_fold0,seurat_v3,300,logit,0,B cell,Memory B cell,10107,0.8501038883941823,0.9077866824972791,-0.057682794103096846
+seurat_v3_shareloess_0300hvg_logit_fold0,seurat_v3,300,logit,0,B cell,Naive B cell,16337,0.933341494766481,0.9288118993695292,0.004529595396951747
+seurat_v3_shareloess_0300hvg_logit_fold0,seurat_v3,300,logit,0,B cell,Plasma cell,898,0.9933184855233853,0.9933184855233853,0.0
+seurat_v3_shareloess_0300hvg_logit_fold0,seurat_v3,300,logit,0,B cell,Transitional B cell,2162,0.3940795559666975,0.4213691026827012,-0.0272895467160037
+seurat_v3_shareloess_0300hvg_logit_fold1,seurat_v3,300,logit,1,B cell,Effector B cell,2329,0.42636324602833836,0.4645770717045942,-0.038213825676255864
+seurat_v3_shareloess_0300hvg_logit_fold1,seurat_v3,300,logit,1,B cell,Memory B cell,9063,0.8361469712015889,0.8869027915701203,-0.050755820368531435
+seurat_v3_shareloess_0300hvg_logit_fold1,seurat_v3,300,logit,1,B cell,Naive B cell,19222,0.9422536676724587,0.9407970034335658,0.0014566642388929019
+seurat_v3_shareloess_0300hvg_logit_fold1,seurat_v3,300,logit,1,B cell,Plasma cell,303,0.9966996699669967,0.9867986798679867,0.00990099009900991
+seurat_v3_shareloess_0300hvg_logit_fold1,seurat_v3,300,logit,1,B cell,Transitional B cell,2863,0.41599720572825705,0.4607055536150891,-0.044708347886832034
+seurat_v3_shareloess_0300hvg_logit_fold2,seurat_v3,300,logit,2,B cell,Effector B cell,1964,0.3874745417515275,0.4546843177189409,-0.0672097759674134
+seurat_v3_shareloess_0300hvg_logit_fold2,seurat_v3,300,logit,2,B cell,Memory B cell,9010,0.8263041065482797,0.8758046614872365,-0.049500554938956776
+seurat_v3_shareloess_0300hvg_logit_fold2,seurat_v3,300,logit,2,B cell,Naive B cell,15996,0.944048512128032,0.9469867466866717,-0.0029382345586397296
+seurat_v3_shareloess_0300hvg_logit_fold2,seurat_v3,300,logit,2,B cell,Plasma cell,217,0.9953917050691244,0.9815668202764977,0.01382488479262678
+seurat_v3_shareloess_0300hvg_logit_fold2,seurat_v3,300,logit,2,B cell,Transitional B cell,2211,0.4120307553143374,0.4369063772048847,-0.02487562189054726
+seurat_v3_shareloess_0300hvg_logit_fold3,seurat_v3,300,logit,3,B cell,Effector B cell,2256,0.41312056737588654,0.4091312056737589,0.003989361702127658
+seurat_v3_shareloess_0300hvg_logit_fold3,seurat_v3,300,logit,3,B cell,Memory B cell,9310,0.854672395273899,0.9048335123523094,-0.05016111707841031
+seurat_v3_shareloess_0300hvg_logit_fold3,seurat_v3,300,logit,3,B cell,Naive B cell,16610,0.9517158338350391,0.9435279951836243,0.008187838651414814
+seurat_v3_shareloess_0300hvg_logit_fold3,seurat_v3,300,logit,3,B cell,Plasma cell,454,0.9933920704845814,0.9889867841409692,0.004405286343612258
+seurat_v3_shareloess_0300hvg_logit_fold3,seurat_v3,300,logit,3,B cell,Transitional B cell,2473,0.3970885564092196,0.4460169834209462,-0.048928427011726616
+seurat_v3_shareloess_0300hvg_logit_fold4,seurat_v3,300,logit,4,B cell,Effector B cell,2347,0.38389433319130806,0.386024712398807,-0.0021303792074989225
+seurat_v3_shareloess_0300hvg_logit_fold4,seurat_v3,300,logit,4,B cell,Memory B cell,10377,0.8229738845523754,0.885226944203527,-0.06225305965115158
+seurat_v3_shareloess_0300hvg_logit_fold4,seurat_v3,300,logit,4,B cell,Naive B cell,18536,0.9450798446266724,0.9419507984462667,0.003129046180405659
+seurat_v3_shareloess_0300hvg_logit_fold4,seurat_v3,300,logit,4,B cell,Plasma cell,278,1.0,0.9964028776978417,0.003597122302158251
+seurat_v3_shareloess_0300hvg_logit_fold4,seurat_v3,300,logit,4,B cell,Transitional B cell,2844,0.3772855133614627,0.3829113924050633,-0.005625879043600568

@@ -13,5 +13,7 @@ __pycache__/
 runs/
 runs_cv/
 runs_legacy/
+runs_quantity/
+runs_quantity_check/
 
 # Note: results/, results_legacy/, figures/ and tables/ are tracked

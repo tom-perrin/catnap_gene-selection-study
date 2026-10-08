@@ -1,0 +1,301 @@
+tag,fold,node,genes,n_genes,child,n,recall,dropped
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own selection,300,Effector B cell,2433,0.5347307850390465,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own selection,300,Memory B cell,10107,0.9248045908776096,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own selection,300,Naive B cell,16339,0.9330436379215374,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own selection,300,Plasma cell,898,0.9888641425389755,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own selection,300,Transitional B cell,2162,0.5083256244218316,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own selection,300,all,31939,0.8729139922978177,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + dropped markers,303,Effector B cell,2433,0.5581586518701191,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + dropped markers,303,Memory B cell,10107,0.9273770654002177,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + dropped markers,303,Naive B cell,16339,0.9348185323459208,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + dropped markers,303,Plasma cell,898,0.987750556792873,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + dropped markers,303,Transitional B cell,2162,0.5106382978723404,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + dropped markers,303,all,31939,0.876545915651711,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + all its markers,334,Effector B cell,2433,0.6173448417591451,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + all its markers,334,Memory B cell,10107,0.9320273078064708,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + all its markers,334,Naive B cell,16339,0.9441826305159434,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + all its markers,334,Plasma cell,898,0.987750556792873,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + all its markers,334,Transitional B cell,2162,0.559204440333025,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,own + all its markers,334,all,31939,0.8906039638060051,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,root selection,300,Effector B cell,2433,0.7036580353473079,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,root selection,300,Memory B cell,10107,0.9207479964381122,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,root selection,300,Naive B cell,16339,0.935430564906053,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,root selection,300,Plasma cell,898,0.9933184855233853,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,root selection,300,Transitional B cell,2162,0.5587419056429233,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,root selection,300,all,31939,0.8892576473903379,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,its markers only,42,Effector B cell,2433,0.4722564734895191,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,its markers only,42,Memory B cell,10107,0.8917581873948749,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,its markers only,42,Naive B cell,16339,0.9327988248974846,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,its markers only,42,Plasma cell,898,0.9821826280623608,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,its markers only,42,Transitional B cell,2162,0.3691026827012026,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold0,0,root/B cell,its markers only,42,all,31939,0.8479601740818435,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own selection,300,Effector B cell,2329,0.5268355517389438,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own selection,300,Memory B cell,9067,0.9160692621594795,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own selection,300,Naive B cell,19222,0.9387160545208615,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own selection,300,Plasma cell,303,0.9933993399339934,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own selection,300,Transitional B cell,2865,0.5486910994764398,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own selection,300,all,33786,0.8716628189190789,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + dropped markers,303,Effector B cell,2329,0.5697724345212538,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + dropped markers,303,Memory B cell,9067,0.912650270210654,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + dropped markers,303,Naive B cell,19222,0.9404328373738424,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + dropped markers,303,Plasma cell,303,0.9933993399339934,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + dropped markers,303,Transitional B cell,2865,0.5462478184991274,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + dropped markers,303,all,33786,0.8744746344639792,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + all its markers,334,Effector B cell,2329,0.6324602833834264,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + all its markers,334,Memory B cell,9067,0.9209220249255542,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + all its markers,334,Naive B cell,19222,0.9525543647903444,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + all its markers,334,Plasma cell,303,0.9933993399339934,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + all its markers,334,Transitional B cell,2865,0.5905759162303665,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,own + all its markers,334,all,33786,0.8916711063754218,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,root selection,300,Effector B cell,2329,0.7067410905968227,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,root selection,300,Memory B cell,9067,0.9114370795191353,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,root selection,300,Naive B cell,19222,0.9393403391946727,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,root selection,300,Plasma cell,303,0.9933993399339934,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,root selection,300,Transitional B cell,2865,0.618150087260035,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,root selection,300,all,33786,0.8890664772390932,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,its markers only,42,Effector B cell,2329,0.46887075998282524,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,its markers only,42,Memory B cell,9067,0.8630197419212529,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,its markers only,42,Naive B cell,19222,0.9462074706065966,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,its markers only,42,Plasma cell,303,0.9966996699669967,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,its markers only,42,Transitional B cell,2865,0.3633507853403141,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold1,1,root/B cell,its markers only,42,all,33786,0.8420055644349731,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own selection,300,Effector B cell,1964,0.5259674134419552,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own selection,300,Memory B cell,9016,0.900399290150843,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own selection,300,Naive B cell,16001,0.9408161989875633,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own selection,300,Plasma cell,217,0.9631336405529954,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own selection,300,Transitional B cell,2211,0.555857078245138,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own selection,300,all,29409,0.8719439627324969,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + dropped markers,303,Effector B cell,1964,0.5534623217922607,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + dropped markers,303,Memory B cell,9016,0.9067213842058562,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + dropped markers,303,Naive B cell,16001,0.941691144303481,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + dropped markers,303,Plasma cell,217,0.9769585253456221,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + dropped markers,303,Transitional B cell,2211,0.5545002261420172,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + dropped markers,303,all,29409,0.8761943622700534,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + all its markers,334,Effector B cell,1964,0.5931771894093686,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + all its markers,334,Memory B cell,9016,0.9122670807453416,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + all its markers,334,Naive B cell,16001,0.9478782576088994,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + all its markers,334,Plasma cell,217,0.9723502304147466,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + all its markers,334,Transitional B cell,2211,0.6056083220262325,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,own + all its markers,334,all,29409,0.8877214458159067,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,root selection,300,Effector B cell,1964,0.6863543788187373,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,root selection,300,Memory B cell,9016,0.908717834960071,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,root selection,300,Naive B cell,16001,0.9417536403974751,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,root selection,300,Plasma cell,217,0.9815668202764977,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,root selection,300,Transitional B cell,2211,0.6173677069199457,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,root selection,300,all,29409,0.8904757047162434,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,its markers only,42,Effector B cell,1964,0.45213849287169044,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,its markers only,42,Memory B cell,9016,0.8621339840283939,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,its markers only,42,Naive B cell,16001,0.9418786325854634,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,its markers only,42,Plasma cell,217,0.9815668202764977,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,its markers only,42,Transitional B cell,2211,0.3541383989145183,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold2,2,root/B cell,its markers only,42,all,29409,0.8408310381175831,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own selection,300,Effector B cell,2256,0.49024822695035464,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own selection,300,Memory B cell,9316,0.9255045083726922,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own selection,300,Naive B cell,16611,0.9508157245198965,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own selection,300,Plasma cell,454,0.9889867841409692,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own selection,300,Transitional B cell,2473,0.530934088152042,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own selection,300,all,31110,0.8770170363227258,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + dropped markers,303,Effector B cell,2256,0.525709219858156,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + dropped markers,303,Memory B cell,9316,0.927436668097896,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + dropped markers,303,Naive B cell,16611,0.9517187405935825,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + dropped markers,303,Plasma cell,454,0.9889867841409692,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + dropped markers,303,Transitional B cell,2473,0.5442782046097857,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + dropped markers,303,all,31110,0.8817100610736097,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + all its markers,333,Effector B cell,2256,0.5775709219858156,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + all its markers,333,Memory B cell,9316,0.931300987548304,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + all its markers,333,Naive B cell,16611,0.9550297995304317,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + all its markers,333,Plasma cell,454,0.9889867841409692,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + all its markers,333,Transitional B cell,2473,0.5863323898099474,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,own + all its markers,333,all,31110,0.8917389906782385,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,root selection,300,Effector B cell,2256,0.6533687943262412,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,root selection,300,Memory B cell,9316,0.9263632460283383,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,root selection,300,Naive B cell,16611,0.9487086870146288,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,root selection,300,Plasma cell,454,0.9911894273127754,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,root selection,300,Transitional B cell,2473,0.6093813182369592,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,root selection,300,all,31110,0.8942462230793957,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,its markers only,42,Effector B cell,2256,0.44060283687943264,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,its markers only,42,Memory B cell,9316,0.8775225418634607,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,its markers only,42,Naive B cell,16611,0.9426885798567215,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,its markers only,42,Plasma cell,454,0.9933920704845814,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,its markers only,42,Transitional B cell,2473,0.36959158916296,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold3,3,root/B cell,its markers only,42,all,31110,0.8419479267116683,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own selection,300,Effector B cell,2347,0.47464848743076266,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own selection,300,Memory B cell,10380,0.9091522157996147,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own selection,300,Naive B cell,18538,0.9379652605459057,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own selection,300,Plasma cell,279,0.978494623655914,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own selection,300,Transitional B cell,2844,0.5316455696202531,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own selection,300,all,34388,0.8643712923112714,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + dropped markers,303,Effector B cell,2347,0.5036216446527482,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + dropped markers,303,Memory B cell,10380,0.9145472061657033,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + dropped markers,303,Naive B cell,18538,0.9377494875391088,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + dropped markers,303,Plasma cell,279,0.978494623655914,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + dropped markers,303,Transitional B cell,2844,0.5327004219409283,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + dropped markers,303,all,34388,0.8679481214377108,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + all its markers,334,Effector B cell,2347,0.5675330208777163,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + all its markers,334,Memory B cell,10380,0.9226396917148362,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + all its markers,334,Naive B cell,18538,0.9468119538245765,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + all its markers,334,Plasma cell,279,0.978494623655914,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + all its markers,334,Transitional B cell,2844,0.5924753867791842,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,own + all its markers,334,all,34388,0.8845818308712341,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,root selection,300,Effector B cell,2347,0.6386876864081806,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,root selection,300,Memory B cell,10380,0.9080924855491329,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,root selection,300,Naive B cell,18538,0.9405545366274679,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,root selection,300,Plasma cell,279,0.985663082437276,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,root selection,300,Transitional B cell,2844,0.5945850914205345,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,root selection,300,all,34388,0.8819064790043039,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,its markers only,42,Effector B cell,2347,0.41116318704729443,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,its markers only,42,Memory B cell,10380,0.8710982658959537,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,its markers only,42,Naive B cell,18538,0.9377494875391088,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,its markers only,42,Plasma cell,279,0.974910394265233,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,its markers only,42,Transitional B cell,2844,0.3389592123769339,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_lgbm_fold4,4,root/B cell,its markers only,42,all,34388,0.832470629289287,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own selection,300,Effector B cell,2433,0.4866420057542129,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own selection,300,Memory B cell,10107,0.9160977540318591,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own selection,300,Naive B cell,16339,0.9342064997857886,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own selection,300,Plasma cell,898,0.9899777282850779,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own selection,300,Transitional B cell,2162,0.5055504162812211,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own selection,300,all,31939,0.8669338426375278,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + dropped markers,303,Effector B cell,2433,0.5256884504726674,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + dropped markers,303,Memory B cell,10107,0.9181755219155041,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + dropped markers,303,Naive B cell,16339,0.9357365811861191,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + dropped markers,303,Plasma cell,898,0.9899777282850779,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + dropped markers,303,Transitional B cell,2162,0.509713228492137,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + dropped markers,303,all,31939,0.8716302952503209,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + all its markers,334,Effector B cell,2433,0.5861076859843815,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + all its markers,334,Memory B cell,10107,0.9184723458988819,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + all its markers,334,Naive B cell,16339,0.9394699798029256,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + all its markers,334,Plasma cell,898,0.9955456570155902,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + all its markers,334,Transitional B cell,2162,0.5619796484736356,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,own + all its markers,334,all,31939,0.8819311813143805,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,root selection,300,Effector B cell,2433,0.688039457459926,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,root selection,300,Memory B cell,10107,0.9116453942811913,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,root selection,300,Naive B cell,16339,0.9334108574576168,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,root selection,300,Plasma cell,898,0.9922048997772829,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,root selection,300,Transitional B cell,2162,0.5490286771507863,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,root selection,300,all,31939,0.8834653558345597,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,its markers only,42,Effector B cell,2433,0.39128647759967117,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,its markers only,42,Memory B cell,10107,0.8726625111308994,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,its markers only,42,Naive B cell,16339,0.9339616867617357,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,its markers only,42,Plasma cell,898,0.9855233853006682,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,its markers only,42,Transitional B cell,2162,0.33348751156336726,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold0,0,root/B cell,its markers only,42,all,31939,0.8340273646638905,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own selection,300,Effector B cell,2329,0.49291541434091884,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own selection,300,Memory B cell,9067,0.9033859049299658,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own selection,300,Naive B cell,19222,0.9408490271563833,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own selection,300,Plasma cell,303,0.9933993399339934,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own selection,300,Transitional B cell,2865,0.5493891797556719,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own selection,300,all,33786,0.8671935121056059,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + dropped markers,303,Effector B cell,2329,0.5332760841562902,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + dropped markers,303,Memory B cell,9067,0.9037167751185619,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + dropped markers,303,Naive B cell,19222,0.9420455727811882,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + dropped markers,303,Plasma cell,303,0.9966996699669967,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + dropped markers,303,Transitional B cell,2865,0.5525305410122164,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + dropped markers,303,all,33786,0.8710412596933641,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + all its markers,334,Effector B cell,2329,0.6109918419922714,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + all its markers,334,Memory B cell,9067,0.9071357670673872,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + all its markers,334,Naive B cell,19222,0.9484444906877536,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + all its markers,334,Plasma cell,303,1.0,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + all its markers,334,Transitional B cell,2865,0.5860383944153578,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,own + all its markers,334,all,33786,0.8838276209080684,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,root selection,300,Effector B cell,2329,0.6745384285100902,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,root selection,300,Memory B cell,9067,0.9070254770045219,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,root selection,300,Naive B cell,19222,0.9370512953906982,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,root selection,300,Plasma cell,303,0.9933993399339934,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,root selection,300,Transitional B cell,2865,0.6233856893542757,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,root selection,300,all,33786,0.8848043568341917,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,its markers only,42,Effector B cell,2329,0.3920137398024903,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,its markers only,42,Memory B cell,9067,0.8337928752619389,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,its markers only,42,Naive B cell,19222,0.9494329414212881,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,its markers only,42,Plasma cell,303,0.9834983498349835,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,its markers only,42,Transitional B cell,2865,0.32809773123909247,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold1,1,root/B cell,its markers only,42,all,33786,0.8275913100100634,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own selection,300,Effector B cell,1964,0.46181262729124234,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own selection,300,Memory B cell,9016,0.8849822537710736,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own selection,300,Naive B cell,16001,0.9427535779013811,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own selection,300,Plasma cell,217,0.9907834101382489,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own selection,300,Transitional B cell,2211,0.5540479421076436,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own selection,300,all,29409,0.8640552211907919,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + dropped markers,303,Effector B cell,1964,0.5071283095723014,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + dropped markers,303,Memory B cell,9016,0.8876441881100267,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + dropped markers,303,Naive B cell,16001,0.9445659646272108,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + dropped markers,303,Plasma cell,217,0.9907834101382489,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + dropped markers,303,Transitional B cell,2211,0.5585707824513795,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + dropped markers,303,all,29409,0.8692237070284606,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + all its markers,334,Effector B cell,1964,0.5697556008146639,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + all its markers,334,Memory B cell,9016,0.8946317657497782,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + all its markers,334,Naive B cell,16001,0.9499406287107056,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + all its markers,334,Plasma cell,217,0.9861751152073732,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + all its markers,334,Transitional B cell,2211,0.6047037539574853,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,own + all its markers,334,all,29409,0.8819068992485294,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,root selection,300,Effector B cell,1964,0.6379837067209776,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,root selection,300,Memory B cell,9016,0.8987355811889973,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,root selection,300,Naive B cell,16001,0.9423161052434222,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,root selection,300,Plasma cell,217,0.9907834101382489,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,root selection,300,Transitional B cell,2211,0.6182722749886929,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,root selection,300,all,29409,0.8846271549525655,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,its markers only,42,Effector B cell,1964,0.36710794297352345,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,its markers only,42,Memory B cell,9016,0.8346273291925466,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,its markers only,42,Naive B cell,16001,0.9492531716767701,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,its markers only,42,Plasma cell,217,0.967741935483871,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,its markers only,42,Transitional B cell,2211,0.3310719131614654,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold2,2,root/B cell,its markers only,42,all,29409,0.8288959162161244,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own selection,300,Effector B cell,2256,0.4397163120567376,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own selection,300,Memory B cell,9316,0.9123014169171318,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own selection,300,Naive B cell,16611,0.9525615555956896,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own selection,300,Plasma cell,454,0.9845814977973568,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own selection,300,Transitional B cell,2473,0.526081682167408,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own selection,300,all,31110,0.8698810671809708,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + dropped markers,303,Effector B cell,2256,0.487145390070922,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + dropped markers,303,Memory B cell,9316,0.9156290253327608,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + dropped markers,303,Naive B cell,16611,0.9522605502377942,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + dropped markers,303,Plasma cell,454,0.9889867841409692,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + dropped markers,303,Transitional B cell,2473,0.528507885159725,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + dropped markers,303,all,31110,0.8744133719061395,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + all its markers,333,Effector B cell,2256,0.5704787234042553,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + all its markers,333,Memory B cell,9316,0.9188492915414341,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + all its markers,333,Naive B cell,16611,0.9545481909577991,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + all its markers,333,Plasma cell,454,0.9933920704845814,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + all its markers,333,Transitional B cell,2473,0.5843105539830166,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,own + all its markers,333,all,31110,0.8871423979427837,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,root selection,300,Effector B cell,2256,0.6245567375886525,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,root selection,300,Memory B cell,9316,0.9168097896092744,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,root selection,300,Naive B cell,16611,0.9515381373788453,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,root selection,300,Plasma cell,454,0.9889867841409692,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,root selection,300,Transitional B cell,2473,0.6004852405984634,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,root selection,300,all,31110,0.8900675024108003,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,its markers only,42,Effector B cell,2256,0.3807624113475177,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,its markers only,42,Memory B cell,9316,0.8512237011592958,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,its markers only,42,Naive B cell,16611,0.9499127084462103,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,its markers only,42,Plasma cell,454,0.9845814977973568,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,its markers only,42,Transitional B cell,2473,0.34209462191670037,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold3,3,root/B cell,its markers only,42,all,31110,0.8312761170041787,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own selection,300,Effector B cell,2347,0.41286749041329357,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own selection,300,Memory B cell,10380,0.898747591522158,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own selection,300,Naive B cell,18538,0.9388822958247923,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own selection,300,Plasma cell,279,1.0,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own selection,300,Transitional B cell,2844,0.5140646976090014,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own selection,300,all,34388,0.8562289170640921,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + dropped markers,303,Effector B cell,2347,0.4682573498082659,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + dropped markers,303,Memory B cell,10380,0.8971098265895954,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + dropped markers,303,Naive B cell,18538,0.9395835580968821,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + dropped markers,303,Plasma cell,279,0.992831541218638,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + dropped markers,303,Transitional B cell,2844,0.5260196905766527,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + dropped markers,303,all,34388,0.860823543096429,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + all its markers,334,Effector B cell,2347,0.5428206220707286,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + all its markers,334,Memory B cell,10380,0.9046242774566474,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + all its markers,334,Naive B cell,18538,0.9447081670083073,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + all its markers,334,Plasma cell,279,0.989247311827957,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + all its markers,334,Transitional B cell,2844,0.5787623066104078,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,own + all its markers,334,all,34388,0.8752762591601722,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,root selection,300,Effector B cell,2347,0.6148274392841926,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,root selection,300,Memory B cell,10380,0.8995183044315992,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,root selection,300,Naive B cell,18538,0.9409321393893624,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,root selection,300,Plasma cell,279,0.989247311827957,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,root selection,300,Transitional B cell,2844,0.5914205344585092,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,root selection,300,all,34388,0.8776608119111318,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,its markers only,42,Effector B cell,2347,0.3561994034938219,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,its markers only,42,Memory B cell,10380,0.8421965317919076,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,its markers only,42,Naive B cell,18538,0.9444384507498113,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,its markers only,42,Plasma cell,279,0.978494623655914,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,its markers only,42,Transitional B cell,2844,0.32454289732770747,FCER2 MS4A1 ZEB2
+f_statistic_0300hvg_logit_fold4,4,root/B cell,its markers only,42,all,34388,0.8224380597882982,FCER2 MS4A1 ZEB2

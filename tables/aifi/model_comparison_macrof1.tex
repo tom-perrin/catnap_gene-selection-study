@@ -8,10 +8,15 @@
 HVG method & model & reselect & fixed & reselect & fixed & reselect & fixed \\
 \midrule
 \multicolumn{8}{l}{\emph{300 HVGs, mean $\pm$ s.d. over 5 donor folds}} \\
-f\_statistic & logit & 0.9578 & \underline{\textbf{0.9605}} & \underline{0.8115} & 0.7945 & \underline{\textbf{0.5834}} & 0.4508 \\
+f\_statistic & logit & 0.9578 & \textbf{0.9605} & 0.8115 & 0.7945 & \textbf{0.5834} & 0.4508 \\
  &  & {\scriptsize$\pm$0.0067} & {\scriptsize$\pm$0.0063} & {\scriptsize$\pm$0.0167} & {\scriptsize$\pm$0.0144} & {\scriptsize$\pm$0.0050} & {\scriptsize$\pm$0.0042} \\[1pt]
  & lgbm & 0.8251 & 0.8200 & \textbf{0.7559} & 0.7406 & \textbf{0.5532} & 0.4283 \\
  &  & {\scriptsize$\pm$0.0059} & {\scriptsize$\pm$0.0277} & {\scriptsize$\pm$0.0058} & {\scriptsize$\pm$0.0057} & {\scriptsize$\pm$0.0033} & {\scriptsize$\pm$0.0079} \\[1pt]
+\addlinespace
+f\_statistic\_markers & logit & 0.9559 & \underline{\textbf{0.9606}} & \underline{0.8213} & 0.8105 & \underline{\textbf{0.5971}} & 0.5470 \\
+ &  & {\scriptsize$\pm$0.0057} & {\scriptsize$\pm$0.0066} & {\scriptsize$\pm$0.0153} & {\scriptsize$\pm$0.0133} & {\scriptsize$\pm$0.0091} & {\scriptsize$\pm$0.0066} \\[1pt]
+ & lgbm & 0.8167 & 0.8313 & \textbf{0.7643} & 0.7572 & \textbf{0.5616} & 0.5325 \\
+ &  & {\scriptsize$\pm$0.0164} & {\scriptsize$\pm$0.0141} & {\scriptsize$\pm$0.0043} & {\scriptsize$\pm$0.0016} & {\scriptsize$\pm$0.0033} & {\scriptsize$\pm$0.0052} \\[1pt]
 \addlinespace
 seurat\_v3 & logit & 0.9428 & 0.9428 & \textbf{0.7867} & 0.7007 & \textbf{0.5309} & 0.3571 \\
  &  & {\scriptsize$\pm$0.0043} & {\scriptsize$\pm$0.0043} & {\scriptsize$\pm$0.0188} & {\scriptsize$\pm$0.0163} & {\scriptsize$\pm$0.0081} & {\scriptsize$\pm$0.0133} \\[1pt]
@@ -24,8 +29,14 @@ f\_statistic & logit & \underline{\textbf{0.9562}} & 0.9560 & \underline{\textbf
 \addlinespace
 seurat\_v3 & logit & 0.9517 & 0.9517 & 0.8503 & \textbf{0.8511} & 0.6087 & \textbf{0.6114} \\
  & lgbm & \textbf{0.8138} & 0.7953 & \textbf{0.7869} & 0.7743 & \textbf{0.5788} & 0.5657 \\
+\midrule
+\multicolumn{8}{l}{\emph{atlas markers, mean $\pm$ s.d. over 5 donor folds}} \\
+marker & logit & \underline{0.9430} & \underline{0.9430} & 0.7119 & \underline{\textbf{0.7517}} & 0.4072 & \textbf{0.4903} \\
+ &  & {\scriptsize$\pm$0.0053} & {\scriptsize$\pm$0.0053} & {\scriptsize$\pm$0.0032} & {\scriptsize$\pm$0.0031} & {\scriptsize$\pm$0.0059} & {\scriptsize$\pm$0.0078} \\[1pt]
+ & lgbm & 0.8136 & 0.8192 & 0.7064 & \textbf{0.7310} & 0.4308 & \underline{\textbf{0.4944}} \\
+ &  & {\scriptsize$\pm$0.0234} & {\scriptsize$\pm$0.0114} & {\scriptsize$\pm$0.0060} & {\scriptsize$\pm$0.0056} & {\scriptsize$\pm$0.0034} & {\scriptsize$\pm$0.0057} \\[1pt]
 \bottomrule
 \end{tabular}
-\caption{aifi: macro-F1 per taxonomy level, per-node reselection vs a single fixed\_global set. Folds hold out whole donors, the single split is fold 0 of the same five. Bold = the arm better in every fold, underline = best of the level within a budget.}
+\caption{aifi: macro-F1 per taxonomy level, per-node reselection vs a single fixed\_global set. Folds hold out whole donors, the single split is fold 0 of the same five. For the atlas markers, reselect trains each node on its own markers, fixed every node on all of them. Bold = the arm better in every fold, underline = best of the level within a budget.}
 \label{tab:comparison-aifi-macrof1}
 \end{table}

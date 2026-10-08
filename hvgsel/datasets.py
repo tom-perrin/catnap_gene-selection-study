@@ -106,22 +106,28 @@ def stratified_draw(labels, fraction: float, rng, min_one: bool = True) -> np.nd
     return np.concatenate(parts) if parts else np.empty(0, dtype=int)
 
 
-def load_dataset(name: str, max_cells: int | None = None, seed: int = 0, verbose: bool = True):
+def load_dataset(name: str, max_cells: int | None = None, seed: int = 0, verbose: bool = True,
+                 where: dict | None = None):
     """
     Load name with raw counts in .X.
 
-    max_cells caps the cells with a draw stratified on the finest label, None uses every cell.
-    obs and var are read backed first, so only the retained cells are ever materialized.
+    where keeps only the cells whose obs[column] is among the values, {column: value(s)}, one
+    compartment say. max_cells then caps the cells with a draw stratified on the finest label,
+    None uses every cell. obs and var are read backed first, so only the retained cells are ever
+    materialized.
     """
     dataset = DATASETS[name]
     backed = sc.read_h5ad(dataset.path, backed="r")
     finest = finest_labels(backed, dataset.label_cols)
 
-    if max_cells is None or max_cells >= backed.n_obs:
-        keep = np.arange(backed.n_obs)
+    pool = np.arange(backed.n_obs)
+    for column, values in (where or {}).items():
+        pool = pool[backed.obs[column].iloc[pool].isin(np.atleast_1d(values)).to_numpy()]
+    if max_cells is None or max_cells >= pool.size:
+        keep = pool
     else:
-        keep = np.sort(stratified_draw(finest, max_cells / backed.n_obs,
-                                       np.random.default_rng(seed)))
+        keep = pool[np.sort(stratified_draw(finest[pool], max_cells / pool.size,
+                                            np.random.default_rng(seed)))]
     if verbose:
         print(f"{name}: {keep.size:,}/{backed.n_obs:,} cells from {dataset.path}")
 

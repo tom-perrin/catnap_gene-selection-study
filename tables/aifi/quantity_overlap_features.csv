@@ -1,0 +1,106 @@
+fold,path,node,depth,branch,n_first,n50
+0,root,root,0,root,2,2
+0,root/B cell,B cell,1,B cell,26,3352
+0,root/B cell/Effector B cell,Effector B cell,2,B cell,95,4727
+0,root/B cell/Memory B cell,Memory B cell,2,B cell,25,3716
+0,root/B cell/Naive B cell,Naive B cell,2,B cell,56,4413
+0,root/DC,DC,1,DC,14,524
+0,root/DC/cDC2,cDC2,2,DC,21,2546
+0,root/Monocyte,Monocyte,1,Monocyte,2,2
+0,root/Monocyte/CD14 monocyte,CD14 monocyte,2,Monocyte,52,3238
+0,root/Monocyte/CD16 monocyte,CD16 monocyte,2,Monocyte,24,1934
+0,root/NK cell,NK cell,1,NK cell,18,4119
+0,root/NK cell/CD56dim NK cell,CD56dim NK cell,2,NK cell,21,4727
+0,root/Progenitor cell/Progenitor cell,Progenitor cell,2,Progenitor cell,28,4892
+0,root/T cell,T cell,1,T cell,4,2727
+0,root/T cell/MAIT,MAIT,2,T cell,98,5063
+0,root/T cell/Memory CD4 T cell,Memory CD4 T cell,2,T cell,4,3352
+0,root/T cell/Memory CD8 T cell,Memory CD8 T cell,2,T cell,4,4119
+0,root/T cell/Naive CD4 T cell,Naive CD4 T cell,2,T cell,53,6013
+0,root/T cell/Naive CD8 T cell,Naive CD8 T cell,2,T cell,56,6666
+0,root/T cell/Treg,Treg,2,T cell,4,3238
+0,root/T cell/gdT,gdT,2,T cell,4,3716
+1,root,root,0,root,2,2
+1,root/B cell,B cell,1,B cell,26,3352
+1,root/B cell/Effector B cell,Effector B cell,2,B cell,91,4727
+1,root/B cell/Memory B cell,Memory B cell,2,B cell,29,3590
+1,root/B cell/Naive B cell,Naive B cell,2,B cell,58,4567
+1,root/DC,DC,1,DC,11,524
+1,root/DC/cDC2,cDC2,2,DC,23,2822
+1,root/Monocyte,Monocyte,1,Monocyte,2,2
+1,root/Monocyte/CD14 monocyte,CD14 monocyte,2,Monocyte,52,3469
+1,root/Monocyte/CD16 monocyte,CD16 monocyte,2,Monocyte,25,2144
+1,root/NK cell,NK cell,1,NK cell,25,3980
+1,root/NK cell/CD56dim NK cell,CD56dim NK cell,2,NK cell,21,4892
+1,root/Progenitor cell/Progenitor cell,Progenitor cell,2,Progenitor cell,17,4892
+1,root/T cell,T cell,1,T cell,4,2635
+1,root/T cell/MAIT,MAIT,2,T cell,99,4892
+1,root/T cell/Memory CD4 T cell,Memory CD4 T cell,2,T cell,4,3469
+1,root/T cell/Memory CD8 T cell,Memory CD8 T cell,2,T cell,4,4263
+1,root/T cell/Naive CD4 T cell,Naive CD4 T cell,2,T cell,51,6223
+1,root/T cell/Naive CD8 T cell,Naive CD8 T cell,2,T cell,58,6440
+1,root/T cell/Treg,Treg,2,T cell,4,3238
+1,root/T cell/gdT,gdT,2,T cell,4,3590
+2,root,root,0,root,2,2
+2,root/B cell,B cell,1,B cell,21,3352
+2,root/B cell/Effector B cell,Effector B cell,2,B cell,90,4567
+2,root/B cell/Memory B cell,Memory B cell,2,B cell,29,3590
+2,root/B cell/Naive B cell,Naive B cell,2,B cell,56,4413
+2,root/DC,DC,1,DC,14,524
+2,root/DC/cDC2,cDC2,2,DC,23,2546
+2,root/Monocyte,Monocyte,1,Monocyte,2,2
+2,root/Monocyte/CD14 monocyte,CD14 monocyte,2,Monocyte,52,3129
+2,root/Monocyte/CD16 monocyte,CD16 monocyte,2,Monocyte,29,1744
+2,root/NK cell,NK cell,1,NK cell,20,3980
+2,root/NK cell/CD56dim NK cell,CD56dim NK cell,2,NK cell,24,4727
+2,root/Progenitor cell/Progenitor cell,Progenitor cell,2,Progenitor cell,28,4892
+2,root/T cell,T cell,1,T cell,5,2635
+2,root/T cell/MAIT,MAIT,2,T cell,99,4892
+2,root/T cell/Memory CD4 T cell,Memory CD4 T cell,2,T cell,4,3352
+2,root/T cell/Memory CD8 T cell,Memory CD8 T cell,2,T cell,4,4119
+2,root/T cell/Naive CD4 T cell,Naive CD4 T cell,2,T cell,56,6013
+2,root/T cell/Naive CD8 T cell,Naive CD8 T cell,2,T cell,56,6666
+2,root/T cell/Treg,Treg,2,T cell,4,3129
+2,root/T cell/gdT,gdT,2,T cell,4,3590
+3,root,root,0,root,2,2
+3,root/B cell,B cell,1,B cell,18,3352
+3,root/B cell/Effector B cell,Effector B cell,2,B cell,92,4727
+3,root/B cell/Memory B cell,Memory B cell,2,B cell,28,3590
+3,root/B cell/Naive B cell,Naive B cell,2,B cell,58,4413
+3,root/DC,DC,1,DC,14,506
+3,root/DC/cDC2,cDC2,2,DC,25,2546
+3,root/Monocyte,Monocyte,1,Monocyte,2,2
+3,root/Monocyte/CD14 monocyte,CD14 monocyte,2,Monocyte,49,3238
+3,root/Monocyte/CD16 monocyte,CD16 monocyte,2,Monocyte,30,2001
+3,root/NK cell,NK cell,1,NK cell,19,3980
+3,root/NK cell/CD56dim NK cell,CD56dim NK cell,2,NK cell,26,4727
+3,root/Progenitor cell/Progenitor cell,Progenitor cell,2,Progenitor cell,33,4892
+3,root/T cell,T cell,1,T cell,4,2635
+3,root/T cell/MAIT,MAIT,2,T cell,101,4892
+3,root/T cell/Memory CD4 T cell,Memory CD4 T cell,2,T cell,4,3352
+3,root/T cell/Memory CD8 T cell,Memory CD8 T cell,2,T cell,4,4119
+3,root/T cell/Naive CD4 T cell,Naive CD4 T cell,2,T cell,53,6013
+3,root/T cell/Naive CD8 T cell,Naive CD8 T cell,2,T cell,58,6666
+3,root/T cell/Treg,Treg,2,T cell,4,3238
+3,root/T cell/gdT,gdT,2,T cell,4,3590
+4,root,root,0,root,2,2
+4,root/B cell,B cell,1,B cell,24,3352
+4,root/B cell/Effector B cell,Effector B cell,2,B cell,87,4727
+4,root/B cell/Memory B cell,Memory B cell,2,B cell,29,3590
+4,root/B cell/Naive B cell,Naive B cell,2,B cell,54,4413
+4,root/DC,DC,1,DC,12,542
+4,root/DC/cDC2,cDC2,2,DC,21,2635
+4,root/Monocyte,Monocyte,1,Monocyte,2,2
+4,root/Monocyte/CD14 monocyte,CD14 monocyte,2,Monocyte,53,3129
+4,root/Monocyte/CD16 monocyte,CD16 monocyte,2,Monocyte,23,1744
+4,root/NK cell,NK cell,1,NK cell,22,4119
+4,root/NK cell/CD56dim NK cell,CD56dim NK cell,2,NK cell,39,4892
+4,root/Progenitor cell/Progenitor cell,Progenitor cell,2,Progenitor cell,34,4567
+4,root/T cell,T cell,1,T cell,4,2635
+4,root/T cell/MAIT,MAIT,2,T cell,101,5063
+4,root/T cell/Memory CD4 T cell,Memory CD4 T cell,2,T cell,4,3352
+4,root/T cell/Memory CD8 T cell,Memory CD8 T cell,2,T cell,4,4263
+4,root/T cell/Naive CD4 T cell,Naive CD4 T cell,2,T cell,48,6013
+4,root/T cell/Naive CD8 T cell,Naive CD8 T cell,2,T cell,58,6666
+4,root/T cell/Treg,Treg,2,T cell,4,3238
+4,root/T cell/gdT,gdT,2,T cell,4,3590

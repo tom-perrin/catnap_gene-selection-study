@@ -22,9 +22,12 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib import patheffects
 from matplotlib.colors import to_rgba
+from matplotlib.ticker import MaxNLocator
 
-from hvgsel import figures
+from hvgsel import figures, marker
+from hvgsel.coverage import split_nodes
 from hvgsel.runs import ARMS, TAG_PATTERN, Run
 
 
@@ -35,15 +38,28 @@ C_RESELECT, C_FIXED = "#2a78d6", "#e34948"
 C_FLIP = "#9a9a9a"     # a node whose gain changes sign across repeats, within split noise
 C_BAND = "#f4f4f4"     # every other node, where several sub-rows share one node label
 
-# One colour per gene budget, smallest first. Clear of the blue/red verdict pair so a colour keeps
-# one meaning across the figures, and apart under protan/deutan/tritan simulation (OKLab dE >= 29)
-# and in lightness, so the pair survives a greyscale print.
-BUDGET_COLOURS = ("#eb6834", "#4a3aa7")
+# One colour per gene budget, fixed so a figure missing a budget does not repaint the others.
+# Clear of the blue/red verdict pair so a colour keeps one meaning across the figures. Apart under
+# protan/deutan/tritan simulation (OKLab dE >= 9, 300 and 2000 >= 29) and in lightness, so the
+# 300/2000 pair survives a greyscale print. 0 is a method without budget, the atlas markers.
+BUDGET_COLOUR = {300: "#eb6834", 2000: "#4a3aa7", 0: "#1baf7a"}
+SPARE_COLOURS = ("#eda100", "#e87ba4")
+
+
+def budget_name(n_hvg: int) -> str:
+    """300 -> '300 HVGs', and a method without budget (n_hvg 0) -> 'atlas markers'."""
+    return f"{n_hvg} HVGs" if n_hvg else "atlas markers"
+
+
+def _budget_key(n_hvg: int) -> tuple:
+    """Budgets smallest first, a method without one last."""
+    return (n_hvg == 0, n_hvg)
 
 BACKEND_MARK = {"logit": "o", "lgbm": "s"}   # fixed, a backend keeps its marker across figures
 # Where a figure shows both at once, the marker's fill is the HVG method: solid for the supervised
 # scores, hollow for the unsupervised one, so the two families read apart at a glance.
-HVG_FILL = {"f_statistic": 1.0, "kruskal_wallis": 0.4, "seurat_v3": 0.0}
+HVG_FILL = {"f_statistic": 1.0, "kruskal_wallis": 0.4, "seurat_v3": 0.0, "marker": 0.5,
+            "f_statistic_markers": 1.0}
 
 SUPERVISED_HVG = ("f_statistic", "kruskal_wallis")
 
@@ -125,7 +141,8 @@ def fold_frame(table: pd.DataFrame, dataset: str, metric="accuracy") -> pd.DataF
     out[("delta", "n")] = grouped["delta"].count()
     out[("delta", "gain")] = grouped["delta"].agg(lambda gains: int((gains > 0).sum()))
     out[("delta", "loss")] = grouped["delta"].agg(lambda gains: int((gains < 0).sum()))
-    order = sorted(out.index, key=lambda row: (row[0], *_config_key(row[1], row[2]), row[3]))
+    order = sorted(out.index, key=lambda row: (*_budget_key(row[0]), *_config_key(row[1], row[2]),
+                                               row[3]))
     return out.reindex(order)
 
 
@@ -242,9 +259,10 @@ def _range_row(ax, y, values, anchor: float, colour: str, forward: bool, mean: f
     ax.scatter([mean], [y], s=22, marker="|", color=colour, lw=0.9, zorder=5)
 
 
-def _finish(figure, handles, ncols: int, path, title=None):
-    """Legend outside the panels, optional suptitle, then write and show."""
-    figure.legend(handles=handles, loc="outside lower center", ncols=ncols)
+def _finish(figure, handles, ncols: int, path, title=None, **legend):
+    """Legend outside the panels, optional suptitle, then write and show. legend goes to the
+    legend itself, its label spacing say."""
+    figure.legend(handles=handles, loc="outside lower center", ncols=ncols, **legend)
     if title:
         figure.suptitle(title, fontsize=plt.rcParams["axes.titlesize"])
     if path:
@@ -582,12 +600,14 @@ def _tint(colour, fill: float):
 
 
 def level_gain_figure(table: pd.DataFrame, dataset: str, metrics=("accuracy", "macro_f1"),
-                      path=None, width=figures.FULL, height=2.6, spread=0.56):
+                      path=None, width=figures.FULL, height=3.4, spread=0.56):
     """
     Gain over fixed_global per level, one panel per metric, every configuration at every budget.
 
-    Colour is the budget (BUDGET_COLOURS). Shape is the backend and fill the HVG method, as in the
-    per-node figures, and the line repeats the fill, solid for the supervised scores. A budget run
+    Colour is the budget (BUDGET_COLOUR), or the method's own in METHOD_COLOUR, which then gets a
+    colour entry of its own below the budgets (METHOD_LEGEND) and no column: its shapes are those of
+    the method it extends. Shape is the backend and fill the HVG method, as in the per-node figures,
+    and the line repeats the fill, solid for the supervised scores. A budget run
     over donor folds shows the mean gain and a bar of one s.d. of the paired per-fold gain, a single
     split its one value. The configurations are spread over `spread` of a level, so no bar hides
     another.
@@ -601,14 +621,13 @@ def level_gain_figure(table: pd.DataFrame, dataset: str, metrics=("accuracy", "m
     stats = {metric: fold_frame(table, dataset, metric).sort_index() for metric in metrics}
     levels = list(dict.fromkeys(first.index.get_level_values("level")))
     budgets = list(dict.fromkeys(n_hvg for n_hvg, _, _ in configs))
-    if len(budgets) > len(BUDGET_COLOURS):
-        raise ValueError(f"{len(budgets)} budgets, BUDGET_COLOURS names {len(BUDGET_COLOURS)}")
-    colour = dict(zip(budgets, BUDGET_COLOURS))
+    spare = iter(SPARE_COLOURS)
+    colour = {n_hvg: BUDGET_COLOUR.get(n_hvg) or next(spare) for n_hvg in budgets}
     offsets = np.linspace(-spread / 2, spread / 2, len(configs)) if len(configs) > 1 else [0.0]
 
     def style(n_hvg, hvg, backend, grey=None):
         fill = HVG_FILL.get(hvg.replace("_shareloess", ""), 0.5)
-        ink = grey or colour[n_hvg]
+        ink = grey or METHOD_COLOUR.get(hvg) or colour[n_hvg]
         return dict(color=ink, marker=BACKEND_MARK.get(backend, "D"), ms=3.8, mew=0.7, mec=ink,
                     mfc=_tint(ink, fill), ls="-" if fill else (0, (2.4, 1.4)), lw=0.8)
 
@@ -627,13 +646,141 @@ def level_gain_figure(table: pd.DataFrame, dataset: str, metrics=("accuracy", "m
         ax.grid(axis="y", color="#ececec")
         ax.set_axisbelow(True)
 
+    # a budget gets an entry when some method draws in its colour, a method of METHOD_COLOUR
+    # carries its own colour on its entries instead
+    shown = [n_hvg for n_hvg in budgets
+             if any(n == n_hvg and h not in METHOD_COLOUR for n, h, _ in configs)]
     handles = [plt.Line2D([], [], color=colour[n_hvg], lw=1.2,
-                          label=f"{n_hvg} HVGs, "
+                          label=f"{budget_name(n_hvg)}, "
                                 + fold_note(first.loc[n_hvg][("delta", "n")]))
-               for n_hvg in budgets]
-    for hvg, backend in dict.fromkeys(config[1:] for config in configs):
-        handles.append(plt.Line2D([], [], label=f"{hvg.replace('_shareloess', '')} x {backend}",
-                                  **style(None, hvg, backend, grey="#6a6a6a")))
+               for n_hvg in shown]
+    for n_hvg, hvg in dict.fromkeys((n, h) for n, h, _ in configs if h in METHOD_COLOUR):
+        folds = first.xs((n_hvg, hvg), level=("n_hvg", "hvg"))[("delta", "n")]
+        handles.append(plt.Line2D([], [], color=METHOD_COLOUR[hvg], lw=1.2,
+                                  label=f"{budget_name(n_hvg)} {METHOD_LEGEND.get(hvg, METHOD_NAME.get(hvg, hvg))}, "
+                                        + fold_note(folds)))
+    # one column per method, its name heading its backends, after a column of budgets padded to
+    # the same height: a legend fills its columns top to bottom, so every column holds as many
+    # entries and the method names line up as a header row
+    pairs = [pair for pair in dict.fromkeys(config[1:] for config in configs)   # logit first
+             if pair[0] not in METHOD_COLOUR]
+    methods = list(dict.fromkeys(hvg for hvg, _ in pairs))
+    backends = list(dict.fromkeys(backend for _, backend in pairs))
+    blank = lambda label="": plt.Line2D([], [], ls="", label=label)
+    handles += [blank() for _ in range(1 + len(backends) - len(handles))]
+    headers = []
+    for hvg in methods:
+        headers.append(METHOD_NAME.get(hvg, hvg.replace("_shareloess", "")))
+        handles.append(blank(headers[-1]))
+        handles += [plt.Line2D([], [], label=backend, **style(None, hvg, backend, grey="#6a6a6a"))
+                    for backend in backends if (hvg, backend) in pairs]
+    legend = figure.legend(handles=handles, loc="outside lower center", ncols=1 + len(methods),
+                           columnspacing=1.4)
+    for text in legend.get_texts():
+        if text.get_text() in headers:
+            text.set_fontweight("bold")
+    if path:
+        figures.save(figure, path)
+    plt.show()
+    return figure
+
+
+# How a gene set's arm reads where both are shown: the atlas markers, the node's own or all of them
+MARKER_ARM = {"reselect": "node", "fixed_global": "all"}
+# A method coloured apart from its budget, and how it reads: the crossover of markers and F
+METHOD_COLOUR = {"f_statistic_markers": "#e87ba4"}
+METHOD_NAME = {"f_statistic_markers": "f_statistic + markers", "marker": "markers"}
+# How a method of METHOD_COLOUR reads beside its budget where the colour stands for it in a legend
+METHOD_LEGEND = {"f_statistic_markers": "including markers"}
+
+
+def gene_set_figure(table: pd.DataFrame, dataset: str, metrics=("accuracy", "macro_f1"),
+                    both_arms=("marker",), path=None, width=figures.FULL, row_height=0.15):
+    """
+    Every gene set's score, not its gain: one panel per metric and level, one block of rows per
+    backend, one row per gene set within it, so the gene sets line up for one backend at a time.
+
+    What the gain figures cannot say: whether one gene set predicts as well as another, the atlas
+    markers against the HVG selections, say. An HVG selection is shown re-selected at every node,
+    the arm a budget is meant to be used with. Methods of both_arms show both: the atlas markers'
+    node's own against all of them at every node. Colour is the budget, or the method's own in
+    METHOD_COLOUR, shape the backend, which also heads each block, so the legend names the colours
+    only. A
+    budget run over donor folds shows the mean and a bar of one s.d. across folds, a single split
+    its value.
+
+    Note: the single split is fold 0 of the folds, so a budget's rows compare to within the fold
+    spread only.
+    """
+    stats = {metric: fold_frame(table, dataset, metric) for metric in metrics}
+    first = stats[metrics[0]]
+    levels = list(dict.fromkeys(first.index.get_level_values("level")))
+    backends = sorted(set(first.index.get_level_values("backend")),
+                      key=lambda b: _config_key("", b))
+    sets = [(n_hvg, hvg, arm)
+            for n_hvg, hvg in dict.fromkeys((n, h) for n, h, _, _ in first.index)
+            for arm in (ARMS if hvg in both_arms else ARMS[:1])]
+    method = lambda hvg: METHOD_NAME.get(hvg, hvg.replace("_shareloess", ""))
+    name = lambda n_hvg, hvg, arm: (f"{budget_name(n_hvg)} · {MARKER_ARM[arm]}" if hvg in both_arms
+                                    else f"{budget_name(n_hvg)} · {method(hvg)}")
+    spare = iter(SPARE_COLOURS)
+    budget = {n: BUDGET_COLOUR.get(n) or next(spare) for n in dict.fromkeys(s[0] for s in sets)}
+    colour = lambda n_hvg, hvg: METHOD_COLOUR.get(hvg, budget[n_hvg])
+
+    # rows top to bottom: a header per backend, then its gene sets
+    rows, labels, y = [], [], 0
+    for backend in backends:
+        labels.append((y, backend, True))
+        y += 1
+        for entry in sets:
+            rows.append((y, backend, entry))
+            labels.append((y, name(*entry), False))
+            y += 1
+    depth = y
+    flip = lambda position: depth - 1 - position   # matplotlib counts rows from the bottom
+
+    figure, axes = plt.subplots(len(metrics), len(levels), sharey=True, squeeze=False,
+                                figsize=(width, len(metrics) * (row_height * depth + 0.5) + 0.5))
+    for r, metric in enumerate(metrics):
+        lookup = stats[metric].sort_index()
+        for ax, level in zip(axes[r], levels):
+            for position, backend, (n_hvg, hvg, arm) in rows:
+                key = (n_hvg, hvg, backend, level)
+                if key not in lookup.index:
+                    continue
+                mean, std = lookup.loc[key, (arm, "mean")], lookup.loc[key, (arm, "std")]
+                ax.errorbar([mean], [flip(position)], xerr=[0 if np.isnan(std) else std],
+                            marker=BACKEND_MARK.get(backend, "D"), ms=3.4, mew=0.6, ls="",
+                            color=colour(n_hvg, hvg), elinewidth=0.8, capsize=0, zorder=3)
+            for position, _, header in labels:
+                if header:   # a thin rule through the header row, the block's divider
+                    ax.axhline(flip(position), color="#4a4a4a", lw=plt.rcParams["axes.linewidth"],
+                               zorder=1)
+            ax.set_title(f"{METRIC_NAME.get(metric, metric)}, {level}", loc="left")
+            ax.xaxis.set_major_locator(MaxNLocator(nbins=4))
+            ax.grid(axis="x", color="#ececec", zorder=0)
+            ax.set_axisbelow(True)
+            ax.tick_params(axis="y", length=0)
+    axes[0][0].set_yticks([flip(p) for p, _, _ in labels], [text for _, text, _ in labels])
+    for row in axes:
+        for tick, (_, _, header) in zip(row[0].get_yticklabels(), labels):
+            if header:
+                tick.set_fontweight("bold")
+    axes[0][0].set_ylim(-0.6, depth - 0.4)
+
+    # one entry per colour, the row blocks already name the backend: a budget, or a method with
+    # a colour of its own. In columns of two, those run over donor folds first, then those on a
+    # single split, so the gene sets measured alike sit together
+    entries = {}
+    for n_hvg, hvg, _ in sets:
+        own = hvg in METHOD_COLOUR
+        folds = first.xs((n_hvg, hvg), level=("n_hvg", "hvg"))[("delta", "n")]
+        what = budget_name(n_hvg) + (f", {method(hvg)}" if own else "")
+        entries.setdefault(hvg if own else n_hvg, (
+            (folds.max() == 1, *_budget_key(n_hvg), own), colour(n_hvg, hvg),
+            f"{what}{'' if n_hvg == 0 else ' re-selected'}, {fold_note(folds)}"))
+    handles = [plt.Line2D([], [], color=paint, lw=1.2, label=text)
+               for _, paint, text in sorted(entries.values())]
     return _finish(figure, handles, -(-len(handles) // 2), path)
 
 
@@ -674,6 +821,381 @@ def backend_figure(table: pd.DataFrame, dataset: str, metric="accuracy", arm="re
     axes[0][0].set_xlabel(f"{metric} ({arm} arm)")
     figure.legend(*axes[0][-1].get_legend_handles_labels(), loc="outside lower center",
                   ncols=len(backends))
+    if path:
+        figures.save(figure, path)
+    plt.show()
+    return figure
+
+
+# --- Marker genes ----------------------------------------------------
+
+COVERAGE_LABEL = "share of the node's atlas markers selected"
+
+
+def _selections(frame: pd.DataFrame) -> list[tuple[str, int]]:
+    """Every (HVG method, budget) in frame, budget first, then supervised first."""
+    pairs = {(row.hvg, row.n_hvg) for row in frame[["hvg", "n_hvg"]].itertuples()}
+    return sorted(pairs, key=lambda pair: (pair[1], not pair[0].startswith(SUPERVISED_HVG), pair[0]))
+
+
+def _bands(ax, y, groups) -> None:
+    """A light band behind every other run of equal groups, one row high."""
+    shade, previous = False, None
+    for yy, group in zip(y, groups):
+        shade = shade ^ (group != previous) if previous is not None else False
+        previous = group
+        if shade:
+            ax.axhspan(yy - 0.5, yy + 0.5, color=C_BAND, lw=0, zorder=0)
+
+
+def coverage_figure(coverage: pd.DataFrame, config_path, path=None, width=figures.FULL,
+                    row_height=0.15):
+    """
+    Per internal node, the share of its atlas markers each arm's genes hold.
+
+    fixed_global's, the root selection, is the black point, reselect's, the node's own, the arrow
+    head: blue when re-selection holds more of them, red when fewer. One panel per HVG method and
+    budget, nodes in tree order with their marker count, a band per Level 1 compartment. Means
+    over folds, the reselect range across them as a line.
+    """
+    order = list(split_nodes(config_path))
+    stats = coverage.groupby(["hvg", "n_hvg", "path"]).agg(
+        fixed=("fixed", "mean"), reselect=("reselect", "mean"), low=("reselect", "min"),
+        high=("reselect", "max"), n=("n_markers", "first"))
+    panels = _selections(coverage)
+    y = np.arange(len(order))[::-1]
+    compartments = [path.split("/")[1] if "/" in path else "root" for path in order]
+
+    figure, axes = plt.subplots(1, len(panels), figsize=(width, row_height * len(order) + 1.0),
+                                sharey=True, squeeze=False)
+    for ax, (hvg, n_hvg) in zip(axes[0], panels):
+        block = stats.loc[(hvg, n_hvg)].reindex(order)
+        _bands(ax, y, compartments)
+        for yy, row in zip(y, block.itertuples()):
+            colour = (C_RESELECT if row.reselect > row.fixed else
+                      C_FIXED if row.reselect < row.fixed else C_FLIP)
+            if row.high > row.low:
+                ax.plot([row.low, row.high], [yy, yy], color=colour, lw=0.8, alpha=0.45,
+                        solid_capstyle="round", zorder=2)
+            if row.reselect != row.fixed:
+                ax.annotate("", xy=(row.reselect, yy), xytext=(row.fixed, yy), zorder=3,
+                            arrowprops=dict(arrowstyle="-|>,head_width=0.12,head_length=0.3",
+                                            color=colour, lw=1.0, shrinkA=0, shrinkB=0))
+        ax.scatter(block["fixed"], y, s=7, color="#1a1a1a", linewidths=0, zorder=4)
+        ax.set_xlim(-0.04, 1.04)
+        ax.set_title(f"{hvg}, {n_hvg} HVGs", loc="left")
+        ax.set_xlabel("share of markers")
+        ax.grid(axis="x", color="#ececec", zorder=0)
+        ax.set_axisbelow(True)
+        ax.tick_params(axis="y", length=0)
+    labels = [f"{path.rsplit('/', 1)[-1]} ({int(n)})"
+              for path, n in stats.loc[panels[0]].reindex(order)["n"].items()]
+    axes[0][0].set_yticks(y, labels)
+    axes[0][0].set_ylim(-0.7, len(order) - 0.3)
+
+    handles = [plt.Line2D([], [], marker="o", ls="", ms=3, color="#1a1a1a",
+                          label="fixed_global (root selection)"),
+               plt.Line2D([], [], color=C_RESELECT, lw=1.2, label="reselect holds more"),
+               plt.Line2D([], [], color=C_FIXED, lw=1.2, label="reselect holds fewer")]
+    return _finish(figure, handles, 3, path)
+
+
+def marker_gene_figure(genes: pd.DataFrame, path=None, width=figures.FULL, blocks=3,
+                       row_height=0.072):
+    """
+    Every atlas marker against every selection, a heatmap split into `blocks` side by side.
+
+    Per (HVG method, budget), two columns: root, the share of folds whose root selection
+    (fixed_global) holds the gene, and nodes, the share of the nodes it marks whose own selection
+    (reselect) holds it, averaged over folds. Genes by the compartment first naming them, then by
+    name, a rule between compartments.
+    """
+    table = marker.marker_table()
+    rank = {name: i for i, name in enumerate(dict.fromkeys(map(marker.compartment, marker.PARENT)))}
+    home = table.assign(rank=table["population"].map(lambda p: rank[marker.compartment(p)]),
+                        home=table["population"].map(marker.compartment))
+    home = home.sort_values("rank").drop_duplicates("gene").set_index("gene")
+    order = sorted(home.index, key=lambda gene: (home.loc[gene, "rank"], gene))
+
+    panels = _selections(genes)
+    means = genes.groupby(["hvg", "n_hvg", "gene"])[["fixed", "reselect"]].mean()
+    columns = [(pair, arm) for pair in panels for arm in ("fixed", "reselect")]
+    grid = np.array([[means.loc[(*pair, gene), arm] for pair, arm in columns] for gene in order])
+    names = [f"{hvg} {n_hvg} · {'root' if arm == 'fixed' else 'nodes'}"
+             for (hvg, n_hvg), arm in columns]
+
+    per = -(-len(order) // blocks)
+    figure, axes = plt.subplots(1, blocks, figsize=(width, row_height * per + 1.3), squeeze=False)
+    for index, ax in enumerate(axes[0]):
+        rows = slice(index * per, min((index + 1) * per, len(order)))
+        part, part_genes = grid[rows], order[rows]
+        image = ax.imshow(part, cmap="Blues", vmin=0, vmax=1, aspect="auto",
+                          interpolation="nearest")
+        ax.set_yticks(range(len(part_genes)), part_genes, fontsize=4.6)
+        ax.set_xticks(range(len(names)), names, rotation=90, fontsize=5)
+        ax.tick_params(length=0, pad=1.5)
+        ax.xaxis.tick_top()
+        for x in np.arange(1.5, len(columns) - 1, 2):
+            ax.axvline(x, color="white", lw=1.2)
+        homes = [home.loc[gene, "home"] for gene in part_genes]
+        for row in range(1, len(homes)):
+            if homes[row] != homes[row - 1]:
+                ax.axhline(row - 0.5, color="#1a1a1a", lw=0.6)
+        for row, name in enumerate(homes):
+            if row == 0 or name != homes[row - 1]:
+                ax.text(len(columns) - 0.4, row - 0.4, name, fontsize=4.6, style="italic",
+                        va="top", ha="left", clip_on=False)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+    figure.colorbar(image, ax=axes[0].tolist(), orientation="horizontal", fraction=0.025,
+                    pad=0.02, aspect=50, label="share holding the gene")
+    if path:
+        figures.save(figure, path)
+    plt.show()
+    return figure
+
+
+PALE = 0.35   # the strength a figure keeps of a colour for the nodes it is not about
+VERDICT_COLOUR = {"gain": C_RESELECT, "loss": C_FIXED, "flip": C_FLIP}
+
+# where a point's name may go, tried in order: (dx, dy) in points, horizontal, vertical alignment.
+# First the four corners hugging the point, then a ring further out, every 45 degrees, which gets
+# a leader line back to the point.
+def _ring(radius: float) -> list:
+    spots = []
+    for angle in np.radians([45, -45, 135, -135, 0, 180, 90, -90]):
+        dx, dy = radius * np.cos(angle), radius * np.sin(angle)
+        ha = "left" if dx > 1 else "right" if dx < -1 else "center"
+        va = "bottom" if dy > 1 else "top" if dy < -1 else "center"
+        spots.append((round(dx, 1), round(dy, 1), ha, va))
+    return spots
+
+
+LABEL_SPOTS = ([(4, 2, "left", "bottom"), (4, -2, "left", "top"), (-4, 2, "right", "bottom"),
+                (-4, -2, "right", "top")] + _ring(14))
+LEADER_AT = 10   # points: a spot this far out draws its leader line
+
+
+def _place_labels(figure, ax, items, obstacles, merge=14, **text) -> None:
+    """
+    Name each (x, y, name, group) of items at the first of LABEL_SPOTS overlapping neither a name
+    already placed nor a point of obstacles, [(x, y)], and staying inside ax, or, none being free,
+    at the spot overlapping least. A name already placed for the same group within merge points is not repeated: points
+    of one group read alike, one name covers them.
+
+    Note: reads extents off a drawn figure, so the layout around ax must be final: call it after
+    every legend is in.
+    """
+    figure.canvas.draw()
+    renderer = figure.canvas.get_renderer()
+    points = figure.dpi / 72
+    taken = []
+    for x, y in obstacles:
+        cx, cy = ax.transData.transform((x, y))
+        taken.append((cx - 3 * points, cy - 3 * points, cx + 3 * points, cy + 3 * points))
+
+    def overlap(a, b):
+        return max(0, min(a[2], b[2]) - max(a[0], b[0])) * max(0, min(a[3], b[3]) - max(a[1], b[1]))
+
+    frame = ax.get_window_extent(renderer).extents
+    outside = lambda e: (e[2] - e[0]) * (e[3] - e[1]) - overlap(e, frame)   # area past ax's edges
+
+    def annotate(x, y, name, spot):
+        dx, dy, ha, va = spot
+        leader = ({"arrowprops": dict(arrowstyle="-", lw=0.5, color="#6a6a6a", shrinkA=1, shrinkB=2.5)}
+                  if np.hypot(dx, dy) >= LEADER_AT else {})
+        return ax.annotate(name, (x, y), xytext=(dx, dy), textcoords="offset points", ha=ha, va=va,
+                           **leader, **text)
+
+    anchors = []
+    for x, y, name, group in items:
+        here = ax.transData.transform((x, y))
+        if any((name, group) == other and np.hypot(*(here - there)) < merge * points
+               for other, there in anchors):
+            continue
+        anchors.append(((name, group), here))
+        best = None
+        for spot in LABEL_SPOTS:
+            label = annotate(x, y, name, spot)
+            extent = label.get_window_extent(renderer).extents
+            clash = sum(overlap(extent, other) for other in taken) + 4 * outside(extent)
+            if best is None or clash < best[0]:
+                best = (clash, spot, tuple(extent))
+            label.remove()
+            if clash == 0:
+                break
+        annotate(x, y, name, best[1])
+        taken.append(best[2])
+
+
+def _short(node: str) -> str:
+    """'Naive B cell' -> 'Naive B', but 'B cell' stays whole, a lone letter reads as a fragment."""
+    short = node.removesuffix(" cell")
+    return short if len(short) > 1 else node
+
+
+def coverage_gain_figure(joined: pd.DataFrame, correlation: pd.DataFrame, focus=None, zoom=None,
+                         path=None, width=figures.FULL, height=2.9, named=5):
+    """
+    Per node, the marker coverage re-selection adds (x) against the accuracy it gains (y), means
+    over folds, one panel per budget.
+
+    Shape is the backend and fill the HVG method, as elsewhere. Each configuration's Spearman per
+    budget sits under its name in the legend, rho_300 for the 300-HVG panel and so on.
+
+    Colour is each configuration's verdict over its folds: blue when every fold gains, red when
+    every one loses, grey when the sign flips. focus maps a budget to the nodes it is about,
+    {300: ["Treg", ...]}: those keep the full colour and are named once per HVG method, without
+    their trailing "cell" (a method's two backends share the x, its selection, and two methods
+    landing on one spot with the same colours share a name), every other node is drawn behind
+    them in a pale version of its colour. A budget focus does not name has every node in full
+    colour and its `named` largest gains or losses named.
+
+    zoom maps a budget to a crowded region, {300: ((x0, x1, y0, y1), (left, bottom, w, h))}: the
+    region in data units, magnified in an inset at the given axes fractions, an empty corner of
+    the panel. Names of points inside it go in the inset.
+
+    Note: a single-split budget has one fold, its verdict is the sign of its one gain.
+    """
+    grouped = joined.groupby(["n_hvg", "hvg", "backend", "node", "depth"])
+    nodes = grouped[["delta", "gain"]].mean()
+    nodes["verdict"] = grouped["gain"].agg(
+        lambda gains: "gain" if (gains > 0).all() else "loss" if (gains < 0).all() else "flip")
+    nodes = nodes.reset_index()
+    budgets = sorted(nodes["n_hvg"].unique())
+    figure, axes = plt.subplots(1, len(budgets), figsize=(width, height), squeeze=False)
+    ink = "#3a3a3a"
+
+    def draw(ax, block, chosen, size):
+        ax.axhline(0, color="#8c8c8c", lw=0.7, zorder=1)
+        ax.axvline(0, color="#8c8c8c", lw=0.7, zorder=1)
+        for (hvg, backend), points in block.groupby(["hvg", "backend"]):
+            fill, mark = HVG_FILL.get(hvg, 0.5), BACKEND_MARK.get(backend, "D")
+            front = points["node"].isin(chosen) if chosen else points["node"].notna()
+            colours = [VERDICT_COLOUR[v] for v in points.loc[front, "verdict"]]
+            back = [_tint(VERDICT_COLOUR[v], PALE) for v in points.loc[~front, "verdict"]]
+            for part, colour, z in ((points[~front], back, 2), (points[front], colours, 4)):
+                ax.scatter(part["delta"], part["gain"], s=size, marker=mark, linewidths=0.6,
+                           facecolors=[_tint(c, fill) for c in colour], edgecolors=colour, zorder=z)
+        ax.grid(color="#ececec", zorder=0)
+        ax.set_axisbelow(True)
+
+    names = []   # (axes, items, obstacles)
+    for ax, n_hvg in zip(axes[0], budgets):
+        block = nodes[nodes["n_hvg"] == n_hvg]
+        chosen = set((focus or {}).get(n_hvg, ()))
+        unknown = chosen - set(block["node"])
+        if unknown:
+            raise KeyError(f"{n_hvg} HVGs: no node {sorted(unknown)} in the breakdowns")
+        draw(ax, block, chosen, 14)
+        ax.set_title(f"{n_hvg} HVGs", loc="left")
+        ax.set_xlabel("marker coverage diff. (reselect $-$ fixed_global)")
+
+        if chosen:
+            front = block[block["node"].isin(chosen)]
+            # one name per node and method, at whichever backend's point lies further from zero,
+            # grouped by the verdicts its points show: methods merge only when they read alike
+            look = front.groupby(["node", "hvg"])["verdict"].agg(lambda v: tuple(sorted(v)))
+            far = front.assign(r=front["gain"].abs()).sort_values("r", ascending=False)
+            far = far.drop_duplicates(["node", "hvg"])
+            items = [(r.delta, r.gain, _short(r.node), look[(r.node, r.hvg)]) for r in far.itertuples()]
+            obstacles = list(zip(front["delta"], front["gain"]))
+        else:
+            # by the gain alone: the coverage extremes crowd one edge, the gain extremes spread out
+            far = block.assign(r=block["gain"].abs()).sort_values("r", ascending=False)
+            items = [(r.delta, r.gain, r.node, None)
+                     for r in far.drop_duplicates("node").head(named).itertuples()]
+            obstacles = []
+
+        if n_hvg in (zoom or {}):
+            (x0, x1, y0, y1), rect = zoom[n_hvg]
+            inset = ax.inset_axes(rect)
+            inset.set_facecolor("white")   # nothing of the panel shows through
+            draw(inset, block, chosen, 11)
+            inset.set_xlim(x0, x1)
+            inset.set_ylim(y0, y1)
+            # no tick labels, the frame and its connectors tie it to the panel's scale
+            inset.tick_params(labelleft=False, labelbottom=False, length=0)
+            for spine in inset.spines.values():
+                spine.set_visible(True)
+                spine.set_color("#8c8c8c")
+                spine.set_linewidth(0.6)
+            ax.indicate_inset_zoom(inset, edgecolor="#8c8c8c", alpha=1, linewidth=0.6)
+            inside = lambda x, y: x0 <= x <= x1 and y0 <= y <= y1
+            names.append((inset, [i for i in items if inside(*i[:2])],
+                          [o for o in obstacles if inside(*o)]))
+            items = [i for i in items if not inside(*i[:2])]
+        names.append((ax, items, obstacles))
+    axes[0][0].set_ylabel("acc. gain (reselect $-$ fixed_global)")   # GAIN_LABEL outgrows the height
+    key = [plt.Line2D([], [], marker="o", ls="", ms=3.6, color=VERDICT_COLOUR[v], label=text)
+           for v, text in (("gain", "gain in every fold"), ("loss", "loss in every fold"),
+                           ("flip", "sign flips across folds"))]
+    axes[0][0].legend(handles=key, loc="upper left", fontsize=5.5, handletextpad=0.2,
+                      borderaxespad=0.4, labelspacing=0.3)
+
+    # two entries per configuration, filling a column: the marker beside the name, then the
+    # Spearmans behind a blank handle, so they start where the name starts
+    rho = correlation.set_index(["hvg", "backend", "n_hvg"])["spearman"]
+    handles = []
+    for hvg, backend in sorted({(r.hvg, r.backend) for r in nodes.itertuples()},
+                               key=lambda c: _config_key(*c)):
+        stats = "   ".join(f"$\\rho_{{{n_hvg}}}$ = {rho[(hvg, backend, n_hvg)]:+.2f}"
+                           for n_hvg in budgets if (hvg, backend, n_hvg) in rho.index)
+        handles += [plt.Line2D([], [], marker=BACKEND_MARK.get(backend, "D"), ls="", ms=3.6,
+                               color=ink, markerfacecolor=_tint(ink, HVG_FILL.get(hvg, 0.5)),
+                               markeredgewidth=0.7, label=f"{hvg} x {backend}"),
+                    plt.Line2D([], [], ls="", label=stats)]
+    figure.legend(handles=handles, loc="outside lower center", ncols=len(handles) // 2,
+                  labelspacing=0.25)
+    # names last, once every legend has settled the layout they are placed against
+    halo = [patheffects.withStroke(linewidth=1.6, foreground="white")]
+    for ax, items, obstacles in names:
+        _place_labels(figure, ax, items, obstacles, fontsize=5.5, zorder=5, path_effects=halo,
+                      color="#1a1a1a" if obstacles else ink)
+    if path:
+        figures.save(figure, path)
+    plt.show()
+    return figure
+
+
+def retrain_figure(frame: pd.DataFrame, colours: dict | None = None, path=None,
+                   width=figures.FULL, row_height=0.2, ncols=3):
+    """
+    runs.retrain_node's recalls: one panel per child class and one for every held-out cell, one
+    row per gene set in frame's order, the mean over folds and a bar of one s.d. Panels fill
+    ncols columns, the worst-recalled class first.
+
+    colours maps a gene set to its colour, grey where it names none.
+    """
+    sets = list(dict.fromkeys(frame["genes"]))
+    children = [c for c in dict.fromkeys(frame["child"]) if c != "all"]
+    # the classes the node loses most on first, the whole node last
+    worst = frame[frame["child"] != "all"].groupby("child")["recall"].mean()
+    children = sorted(children, key=lambda c: worst[c]) + ["all"]
+    stats = frame.groupby(["genes", "child"])["recall"].agg(["mean", "std"])
+    sizes = frame.groupby("genes")["n_genes"].mean()
+    y = np.arange(len(sets))[::-1]
+    colours = colours or {}
+
+    nrows = -(-len(children) // ncols)
+    figure, axes = plt.subplots(nrows, ncols, sharey=True, squeeze=False,
+                                figsize=(width, nrows * (row_height * len(sets) + 0.55) + 0.35))
+    for ax in axes.flat[len(children):]:
+        ax.set_visible(False)
+    for ax, child in zip(axes.flat, children):
+        for yy, name in zip(y, sets):
+            mean, std = stats.loc[(name, child)]
+            ax.errorbar([mean], [yy], xerr=[0 if np.isnan(std) else std], marker="o", ms=3.6,
+                        color=colours.get(name, "#8c8c8c"), elinewidth=0.8, capsize=0, ls="")
+        ax.set_title(child if child != "all" else "every cell", loc="left")
+        ax.xaxis.set_major_locator(MaxNLocator(nbins=3))
+        ax.grid(axis="x", color="#ececec", zorder=0)
+        ax.set_axisbelow(True)
+        ax.tick_params(axis="y", length=0)
+    for row in axes:
+        row[0].set_yticks(y, [f"{name} ({sizes[name]:.0f})" for name in sets])
+        row[0].set_ylim(-0.6, len(sets) - 0.4)
+    figure.supxlabel("recall on held-out cells", fontsize=plt.rcParams["axes.labelsize"])
     if path:
         figures.save(figure, path)
     plt.show()
@@ -766,7 +1288,8 @@ def comparison_latex(table: pd.DataFrame, dataset: str, metric="accuracy", path=
         if body:
             body.append(r"\midrule")
         note = fold_note(budget[("delta", "n")])
-        body.append(rf"\multicolumn{{{2 + 2 * len(levels)}}}{{l}}{{\emph{{{n_hvg} HVGs, {note}}}}} \\")
+        body.append(rf"\multicolumn{{{2 + 2 * len(levels)}}}{{l}}"
+                    rf"{{\emph{{{budget_name(n_hvg)}, {note}}}}} \\")
         best = budget[[(arm, "mean") for arm in ARMS]].max(axis=1).groupby(level="level").max()
 
         previous = None

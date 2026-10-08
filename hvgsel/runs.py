@@ -38,11 +38,15 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import StratifiedGroupKFold
 
 from catnap_core import hierarchy
+from catnap_core.backends import get_model
 from catnap_core.hierarchy import norm
+from catnap_core.hvg import select_genes as catnap_select_genes
 from catnap_core.predict import predict_labels
+from catnap_core.train import train as train_node
 from catnap_core.train import train_config
 from catnap_core.utils import finest_labels
 
+from hvgsel import marker  # noqa: F401  registers the "marker" HVG method with catnap
 from hvgsel.comparisons import Score
 from hvgsel.datasets import stratified_draw
 from hvgsel.scorer import select_genes
@@ -65,12 +69,22 @@ HVG_PARAMS = {
     "f_statistic": {"min_cells_per_child": 2},
     "kruskal_wallis": {"min_cells_per_child": 2, "gene_block": 4096},
     "seurat_v3": {"batch_key": None, "share_loess": True, "span_loess": 0.3},
+    "marker": {},
+    "f_statistic_markers": {"min_cells_per_child": 2},
 }
+# None: no score to rank genes by, the fixed_global set is what the config's root selects for
+# itself. For marker, that is every marker the atlas names.
 BASELINE = {
     "f_statistic": Score("f_stat", "root", cut="leaves"),
     "kruskal_wallis": Score("kw", "root", cut="leaves"),
     "seurat_v3": Score("vst", "root"),
+    "marker": None,
+    "f_statistic_markers": Score("f_stat", "root", cut="leaves"),
 }
+NO_BUDGET = ("marker",)   # methods whose gene count is theirs to decide, run with n_top 0
+# methods whose fixed_global set is every atlas marker, filled to the budget by BASELINE's ranking,
+# the root's counterpart of what their reselect arm does at every node
+MARKERS_FILLED = ("f_statistic_markers",)
 
 # catnap's own LGBM defaults, device pinned. Deliberately untuned: the logit arm runs on its
 # defaults too, so tuning one side only would confound the model class with the tuning effort.
@@ -396,15 +410,30 @@ def baseline_selection(adata_train, label_cols, spec: Score, n_top: int, cache_d
     return ranking[:n_top]
 
 
-def compare_arms(adata, dataset: str, label_cols, config_path, baseline: Score, n_hvg: int,
+def root_selection(adata_train, label_cols, config_path) -> list:
+    """
+    Gene names for the fixed_global arm of a method without a baseline score: what the config's
+    root selects for itself, with the root's children as labels, as training would.
+    """
+    _, root = hierarchy.root_item(hierarchy.load_config(config_path))
+    finest = finest_labels(adata_train, label_cols)
+    target = np.full(finest.shape, "", dtype=object)
+    for child, labels in hierarchy.child_label_sets(root).items():
+        target[np.isin(finest, list(labels))] = norm(child)
+    return catnap_select_genes(adata_train, root.get("hvg"), params=root.get("hvg_params"),
+                               labels=target)
+
+
+def compare_arms(adata, dataset: str, label_cols, config_path, baseline: Score | None, n_hvg: int,
                  root="runs", tag: str | None = None, donor_col: str | None = None, n_folds=5,
                  fold=0, seed=0, subsample=None, test_frac=0.2, min_n=20, force=False,
-                 split: Split | None = None) -> Run:
+                 split: Split | None = None, fill_markers=False) -> Run:
     """
     Full experiment: split, train or reuse both arms, predict, score, write under root/dataset/tag.
 
-    baseline is the root selection that defines the fixed_global gene set. The split arguments
-    are make_split's.
+    baseline is the root selection that defines the fixed_global gene set, every atlas marker
+    first and baseline's best other genes after when fill_markers. The split arguments are
+    make_split's.
 
     Note: models already under root/dataset/tag are reused only if they were trained on this
     split's training cells. Otherwise the held-out cells could include cells they trained on.
@@ -424,15 +453,24 @@ def compare_arms(adata, dataset: str, label_cols, config_path, baseline: Score, 
         print(f"both arms already trained under {run.dir}")
     else:  # training cells and baseline selection are only needed to train
         adata_train = adata[split.train].copy()
-        genes = baseline_selection(adata_train, label_cols, baseline, n_hvg,
-                                   Path(root) / dataset / BASELINES, split)
+        if baseline is None:
+            genes = root_selection(adata_train, label_cols, config_path)
+        else:
+            markers = ([gene for gene in adata_train.var_names.astype(str)
+                        if gene in set(marker.marker_table()["gene"])] if fill_markers else [])
+            # enough of the ranking that the markers it holds still leave n_hvg others
+            genes = baseline_selection(adata_train, label_cols, baseline, n_hvg + len(markers),
+                                       Path(root) / dataset / BASELINES, split)
+            if fill_markers:
+                genes = marker.fill(markers, genes, n_hvg)
         run.train(adata_train, label_cols, config_path, genes, force=force)
         del adata_train
 
     evaluate(run, adata_test, label_cols, min_n, split.donor_col)
     run.write_meta({**run.meta, "dataset": dataset, "tag": run.tag, "label_cols": list(label_cols),
                     "config": str(config_path), "n_hvg": int(n_hvg),
-                    "baseline": baseline.spec, "n_genes": int(adata.n_vars), **split.meta})
+                    "baseline": baseline.spec if baseline else "root selection",
+                    "n_genes": int(adata.n_vars), **split.meta})
     return run
 
 
@@ -458,7 +496,9 @@ def variant_config(source, hvg: str, n_top: int, hvg_params: dict | None = None,
             return
         if "hvg" in node:
             node["hvg"] = hvg
-            node["hvg_params"] = {"n_top_genes": int(n_top), **HVG_PARAMS[hvg], **(hvg_params or {})}
+            # a method of NO_BUDGET takes no n_top_genes, its selector would reject one
+            budget = {} if hvg in NO_BUDGET else {"n_top_genes": int(n_top)}
+            node["hvg_params"] = {**budget, **HVG_PARAMS[hvg], **(hvg_params or {})}
         if backend and "backend" in node:
             node["backend"] = backend
             node["backend_params"] = dict(backend_params or {})
@@ -495,7 +535,8 @@ def run_variants(adata, dataset: str, label_cols, source_config, configs, root="
 
         print(f"\n===== {tag} =====", flush=True)
         runs.append(compare_arms(adata, dataset, label_cols, destination / "config.yml",
-                                 baseline=BASELINE[hvg], n_hvg=n_top, root=root, tag=tag, **kwargs))
+                                 baseline=BASELINE[hvg], n_hvg=n_top, root=root, tag=tag,
+                                 fill_markers=hvg in MARKERS_FILLED, **kwargs))
     return runs
 
 
@@ -531,10 +572,64 @@ def run_folds(adata, dataset: str, label_cols, source_config, hvg: str, n_top: i
         print(f"\n===== {tag} =====", flush=True)
         runs.append(compare_arms(adata, dataset, label_cols, destination / "config.yml",
                                  baseline=BASELINE[hvg], n_hvg=n_top, root=root, tag=tag,
+                                 fill_markers=hvg in MARKERS_FILLED,
                                  donor_col=donor_col, n_folds=n_folds, fold=fold, seed=seed,
                                  **kwargs))
     staged.unlink()
     return runs
+
+
+# --- One node, other genes -------------------------------------------
+
+def retrain_node(adata, run: Run, node_path: str, gene_sets: dict, arm="reselect") -> pd.DataFrame:
+    """
+    One node's model of run retrained on each of gene_sets, {name: genes}, scored per child class.
+
+    A gene set given as an arm's name instead, "reselect" or "fixed_global", is that arm's saved
+    model at the node, scored as it is: the node's own selection and the root's, without training.
+
+    Trained on the node's cells of run's training split and scored on its held-out ones, which
+    run's predictions.csv.gz names, so the node alone is measured, free of the nodes above. The
+    backend and its parameters are the node's own, read from arm's config.
+
+    adata needs the node's cells only, one compartment loaded with load_dataset(where=...) say.
+    A marker absent from adata is left out of its set.
+
+    Note: raises when the training cells do not number what the saved node model trained on, the
+    sign of another split or of cells missing from adata.
+    """
+    _, node = hierarchy.root_item(hierarchy.load_config(run.arm_dir(arm) / "config.yml"))
+    for name in node_path.split("/")[1:]:
+        node = {norm(child): below for child, below in hierarchy.children_of(node).items()}[name]
+    finest = finest_labels(adata, run.meta["label_cols"])
+    target = np.full(finest.shape, "", dtype=object)
+    for child, labels in hierarchy.child_label_sets(node).items():
+        target[np.isin(finest, list(labels))] = norm(child)
+
+    held_out = adata.obs_names.isin(pd.read_csv(run.dir / "predictions.csv.gz", usecols=["cell"])["cell"])
+    train_mask, test_mask = (target != "") & ~held_out, (target != "") & held_out
+    record = json.loads((run.arm_dir(arm) / "models" / node_path / "training_metadata.json").read_text())
+    expected = record["fit_metadata"]["n_training_cells"]
+    if int(train_mask.sum()) != expected:
+        raise RuntimeError(f"{run.tag} {node_path}: {int(train_mask.sum()):,} training cells, the "
+                           f"saved model trained on {expected:,}")
+
+    truth, rows = target[test_mask], []
+    for name, genes in gene_sets.items():
+        if isinstance(genes, str):
+            model = get_model(node["backend"]).load(run.arm_dir(genes) / "models" / node_path)
+            genes = model.gene_names
+        else:
+            genes = [gene for gene in dict.fromkeys(genes) if gene in adata.var_names]
+            model = train_node(adata[train_mask], target[train_mask], node["backend"],
+                               node.get("backend_params"), genes=genes)
+        predicted = model.predict(adata[test_mask])
+        for child in [*sorted(set(truth)), None]:
+            cells = truth == child if child else np.ones(truth.size, bool)
+            rows.append(dict(tag=run.tag, fold=run.meta.get("fold"), node=node_path, genes=name,
+                             n_genes=len(genes), child=child or "all", n=int(cells.sum()),
+                             recall=float((predicted[cells] == truth[cells]).mean())))
+    return pd.DataFrame(rows)
 
 
 # --- Reading back what is on disk ------------------------------------
@@ -574,16 +669,21 @@ def refresh_runs(adata, dataset: str, label_cols, root="runs", min_n=20, tags=No
     return runs
 
 
-def configurations(root, dataset: str, n_hvg: int) -> list[Run]:
+def configurations(root, dataset: str, n_hvg: int, crossovers=False) -> list[Run]:
     """
     Every run of dataset at n_hvg that already has its per-node breakdowns on disk.
 
     These are the configurations report.config_breakdown_figure reads together.
+
+    Note: the crossovers, MARKERS_FILLED, are left out unless crossovers. They test what adding
+    the atlas markers does to a method, not a selection method the study compares.
     """
     runs = []
     for run_dir in sorted((Path(root) / dataset).iterdir()):
         parts = TAG_PATTERN.match(run_dir.name)
         if parts is None or int(parts["n_hvg"]) != n_hvg:
+            continue
+        if parts["hvg"] in MARKERS_FILLED and not crossovers:
             continue
         if not list(run_dir.glob("breakdown_*.csv")):
             print(f"  {run_dir.name}: no breakdown on disk, skipping")
